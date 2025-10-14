@@ -1,0 +1,12 @@
+
+Windows venv activate 
+python -m venv venv
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+.\venv\Scripts\Activate.ps1
+
+
+
+python manage.py makemigrations 
+python manage.py migrate
+
+
