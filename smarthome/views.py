@@ -3,4 +3,4 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return HttpResponse("Yo, welcome to devices index.")
+    return HttpResponse("Yo, this is SmartHome index.")
