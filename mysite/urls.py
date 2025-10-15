@@ -21,7 +21,7 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 
 urlpatterns = [
     path("__debug__/", include(debug_toolbar.urls)),
-    # path("polls/", include("polls.urls")), #example, to be removed
-    path("smarthome/", include("smarthome.urls")),
+    path("polls/", include("polls.urls")),  # example, to be removed
+    path("", include("smarthome.urls")),
     path('admin/', admin.site.urls),
 ]
