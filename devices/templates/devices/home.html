@@ -1,0 +1,12 @@
+{% extends "smarthome/base.html" %}
+
+{% block title %}Home - SmartHome{% endblock %}
+
+{% block content %}
+<h1>Your devices:</h1>
+
+<form method="POST" action="{% url 'smarthome:home' %}">
+    {% csrf_token %}
+    <button type="submit">Back to user panel</button>
+</form>
+{% endblock %}

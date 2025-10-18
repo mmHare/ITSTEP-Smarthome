@@ -37,8 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'polls.apps.PollsConfig',  # example, to be removed
     'smarthome.apps.SmarthomeConfig',
+    'devices.apps.DevicesConfig',
     'debug_toolbar',
 ]
 
