@@ -1,0 +1,14 @@
+{% extends "smarthome/base.html" %}
+
+{% block title %}Login - SmartHome{% endblock %}
+
+{% block content %}
+<h2>Rejestracja</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Zarejestruj się</button>
+</form>
+<p>Masz już konto? <a href="{% url 'smarthome:login' %}">Zaloguj się</a></p>
+{% endblock %} 
+
