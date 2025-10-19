@@ -1,0 +1,17 @@
+{% extends "smarthome/base.html" %}
+
+{% block title %}
+    {% if form.instance.pk %}Edit Device{% else %}New Device{% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>{% if form.instance.pk %}Edit Device{% else %}New Device{% endif %}</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Save</button>
+</form>
+
+<p><a href="{% url 'devices:home' %}">Cancel</a></p>
+{% endblock %}

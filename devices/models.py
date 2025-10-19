@@ -23,10 +23,12 @@ class DeviceType(models.Model):
 
 class Device(models.Model):
     device_name = models.CharField("name", max_length=200)
-    device_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    device_type = models.ForeignKey(DeviceType, on_delete=models.CASCADE)
+    device_user = models.ForeignKey(
+        User, verbose_name="user", on_delete=models.CASCADE)
+    device_type = models.ForeignKey(
+        DeviceType, verbose_name="type", on_delete=models.CASCADE)
     device_room = models.ForeignKey(
-        DeviceRoom, default=None, on_delete=models.SET_NULL, null=True, blank=True)
+        DeviceRoom, verbose_name="room", default=None, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return self.device_name
