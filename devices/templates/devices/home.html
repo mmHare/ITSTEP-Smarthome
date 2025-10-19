@@ -5,6 +5,16 @@
 {% block content %}
 <h1>Your devices:</h1>
 
+{% if devices %}
+    <ul>
+        {% for device in devices %}
+            <li><a href="{% url 'devices:details' device.id %}">{{ device.device_name }} ({{ device.device_type }}{% if device.device_room %} - {{ device.device_room }}{% endif %})</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>You have no devices yet.</p>
+{% endif %}
+
 <form method="POST" action="{% url 'smarthome:home' %}">
     {% csrf_token %}
     <button type="submit">Back to user panel</button>

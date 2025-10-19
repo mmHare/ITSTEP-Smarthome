@@ -1,0 +1,18 @@
+{% extends "smarthome/base.html" %}
+
+{% block title %}{{ device.device_name }} - Details{% endblock %}
+
+{% block content %}
+<h1>{{ device.device_name }}</h1>
+<p><strong>Type:</strong> {{ device.device_type }}</p>
+
+{% if device.device_room %}
+    <p><strong>Room:</strong> {{ device.device_room }}</p>
+{% else %}
+    <p><strong>Room:</strong> None</p>
+{% endif %}
+
+{% comment %} <p><strong>Owner:</strong> {{ device.device_user.username }}</p> {% endcomment %}
+
+<button onclick="window.location='{% url 'devices:home' %}'">Back</button>
+{% endblock %}

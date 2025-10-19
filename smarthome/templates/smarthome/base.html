@@ -1,12 +1,10 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
 <head>
     <title>{% block title %}SmartHome{% endblock %}</title>
-    <style>
-        body { font-family: Arial; margin: 40px; background: #f7f7f7; }
-        header { background: #333; color: white; padding: 10px; border-radius: 5px; }
-        footer { margin-top: 40px; font-size: 0.9em; color: #555; }
-    </style>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
     <header>

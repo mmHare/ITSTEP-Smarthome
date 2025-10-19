@@ -5,10 +5,8 @@
 {% block content %}
 <h1>Welcome, {{ user_name }}!</h1>
 
-<form method="GET" action="{% url 'devices:devices_home' %}">
-    {% csrf_token %}
-    <button type="submit">Devices</button>
-</form>
+<button onclick="window.location='{% url 'admin:index' %}'">Administration panel</button>
+<button onclick="window.location='{% url 'devices:home' %}'">Devices</button>
 
 <form method="POST" action="{% url 'smarthome:logout' %}">
     {% csrf_token %}
