@@ -1,7 +1,8 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout
-from .forms import SignUpForm
 from django.contrib.auth.forms import AuthenticationForm
+
+from .forms import SignUpForm
 
 
 def index_view(request):

@@ -1,14 +1,11 @@
 from django.shortcuts import redirect, render
 from django.views import generic
-
-from devices.forms import DeviceForm
-
-from .models import Device
-
-
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
+
+from .forms import DeviceForm
+from .models import Device, DeviceRoom
 
 
 def devices_home_view(request):
@@ -47,7 +44,7 @@ def new_device_view(request):
         print('not valid')
     else:
         form = DeviceForm()
-    return render(request, 'devices/new_device.html', {'form': form})
+    return render(request, 'devices/device_form.html', {'form': form})
 
 
 class DeviceUpdateView(UpdateView):
@@ -71,3 +68,34 @@ def delete_device_view(request, pk):
 
     # Optional: confirmation page (could skip and delete immediately)
     return render(request, 'devices/confirm_delete.html', {'device': device})
+
+
+def room_list_view(request):
+    error_text = ''
+    if request.method == 'POST':
+        try:
+            name = request.POST.get('name')
+            if name:
+                if DeviceRoom.objects.filter(room_name=name).exists():
+                    error_text = 'This room is already in the list'
+                else:
+                    DeviceRoom.objects.create(room_name=name)
+
+        except DeviceRoom.DoesNotExist:
+            error_text = 'Room does not exist'
+            # return render(request, 'devices/room_list.html', {'error': 'Room does not exist'})
+
+    device_rooms = DeviceRoom.objects.filter()
+
+    return render(request, 'devices/room_list.html', {
+        'rooms': device_rooms,
+        'error': error_text,
+    })
+
+
+def delete_device_view(request, pk):
+    room = get_object_or_404(DeviceRoom, pk=pk)
+
+    if request.method == 'POST':
+        room.delete()
+        return redirect('devices:room_list')
