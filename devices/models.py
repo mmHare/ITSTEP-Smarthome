@@ -12,13 +12,12 @@ class DeviceRoom(models.Model):
 class DeviceType(models.Model):
     type_name = models.CharField("name", max_length=200)
     is_active = models.BooleanField("active", default=True)
-    state = models.BooleanField("on", default=False)
+
+    enable_thermal = models.BooleanField("Enable thermal rules", default=False)
+    enable_time = models.BooleanField("Enable time rules", default=False)
 
     def __str__(self):
         return self.type_name
-
-    def change_state(self):
-        self.state = not self.state
 
 
 class Device(models.Model):
@@ -29,6 +28,16 @@ class Device(models.Model):
         DeviceType, verbose_name="type", on_delete=models.CASCADE)
     device_room = models.ForeignKey(
         DeviceRoom, verbose_name="room", default=None, on_delete=models.SET_NULL, null=True, blank=True)
+    state = models.BooleanField("on", default=False)
 
     def __str__(self):
         return self.device_name
+
+    def change_state(self):
+        self.state = not self.state
+
+    def turn_on(self):
+        self.state = False
+
+    def turn_off(self):
+        self.state = True

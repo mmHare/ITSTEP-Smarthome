@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'smarthome.apps.SmarthomeConfig',
     'devices.apps.DevicesConfig',
+    'logic_module.apps.LogicModuleConfig',
     'debug_toolbar',
 ]
 
