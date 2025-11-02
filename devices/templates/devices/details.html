@@ -12,7 +12,137 @@
     <p><strong>Room:</strong> None</p>
 {% endif %}
 
-{% comment %} <p><strong>Owner:</strong> {{ device.device_user.username }}</p> {% endcomment %}
+<br>
+
+<h3>Rules set for this device:</h3>
+<ul>
+    {% for rule in logic_controllers %}
+        <li>
+            <p>
+            <form method="POST" action="{% url 'devices:delete_logic_rule_view' rule.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input
+                    type="checkbox"
+                    id="rule_{{ rule.id }}"
+                    {% if rule.active %}checked{% endif %}
+                    onchange="toggleRuleActive({{ rule.id }}, this.checked)"
+                >
+                {% comment %} <label for="rule_{{ rule.id }}">Active</label> {% endcomment %}
+                {{ rule.name }}    
+
+                <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete {{ rule.name }}?')">Delete</button>
+            </form>
+            </p>
+            
+
+
+            {% comment %} <input
+                type="checkbox"
+                id="rule_{{ rule.id }}"
+                {% if rule.active %}checked{% endif %}
+                onchange="toggleRuleActive({{ rule.id }}, this.checked)"
+            >
+            {% comment %} <label for="rule_{{ rule.id }}">Active</label> 
+            {{ rule.name }} {% endcomment %}
+        </li>
+    {% empty %}
+        <li>No rules set yet.</li>
+    {% endfor %}
+</ul>    
+
+<h3>Add a new rule:</h3>   
+<form method="POST" action="{% url 'devices:details' device.id %}">
+    {% csrf_token %}
+  
+    <label for="logic_option">Choose logic type:</label>
+    <select name="logic_option" id="logic_option">
+        {% for code, name in logic_types %}
+            <option value="{{ code }}">{{ name }}</option>
+        {% endfor %}
+    </select>
+
+    <div id="logic-form-fields">
+        {{ logic_form.as_p }}
+    </div>
+
+    <button type="submit">Add Rule</button>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selector = document.getElementById('logic_option');
+    if (!selector) return; // safety check
+    const formFields = document.getElementById('logic-form-fields');
+
+    function updateFields() {
+        const selected = selector.value;
+
+        // Hide everything first
+        formFields.querySelectorAll('p').forEach(p => p.style.display = 'none');
+
+        // Always show "active" if it exists
+        {% comment %} const activeField = formFields.querySelector('[name="active"]');
+        if (activeField) activeField.closest('p').style.display = 'block'; {% endcomment %}
+        const nameField = formFields.querySelector('[name="name"]');
+        if (nameField) nameField.closest('p').style.display = 'block';
+
+        if (selected === 'thermal') {
+            ['numeric_min', 'numeric_max'].forEach(name => {
+                const el = formFields.querySelector(`[name="${name}"]`);
+                if (el) el.closest('p').style.display = 'block';
+            });
+        } else if (selected === 'time') {
+            ['time_min', 'time_max'].forEach(name => {
+                const el = formFields.querySelector(`[name="${name}"]`);
+                if (el) el.closest('p').style.display = 'block';
+            });
+        }
+    }
+
+    // Run once on page load
+    updateFields();
+    // Run every time selection changes
+    selector.addEventListener('change', updateFields);
+});
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+
+function toggleRuleActive(ruleId, isActive) {
+    fetch(`/devices/logic/${ruleId}/toggle-active/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify({ active: !!isActive })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            alert("Failed to update rule state: " + (data.error || 'unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error updating rule:', error);
+        alert("Network error while updating rule state");
+    });
+}
+
+</script>
+
+{% if error %}
+    <p class="error">{{ error }}</p>
+{% endif %}
+
+<br>
 
 <button onclick="window.location='{% url 'devices:home' %}'">Back</button>
 {% endblock %}
+
+
+
