@@ -144,39 +144,6 @@ def delete_device_view(request, pk):
         return redirect('devices:room_list')
 
 
-# @csrf_exempt  # (optional for simplicity, see note below)
-# @ensure_csrf_cookie
-# @require_POST
-# def toggle_logic_active(request, pk):
-#     try:
-#         logic = LogicController.objects.get(pk=pk)
-#         active = request.POST.get('active') == 'true'
-#         logic.active = active
-#         logic.save()
-#         return JsonResponse({'success': True, 'active': logic.active})
-#     except LogicController.DoesNotExist:
-#         return JsonResponse({'success': False, 'error': 'Logic not found'}, status=404)
-# # @ensure_csrf_cookie
-# # @require_POST
-# # def toggle_logic_active(request, rule_id):
-# #     if request.method == "POST":
-# #         data = json.loads(request.body)  # parse JSON manually
-# #         is_active = data.get("active")
-# #         rule = LogicController.objects.get(id=rule_id)
-# #         rule.active = is_active
-# #         rule.save()
-# #         return JsonResponse({"success": True, "active": rule.active})
-# #     return JsonResponse({"error": "Invalid request"}, status=400)
-# @require_POST
-# # @ensure_csrf_cookie
-# def toggle_logic_active(request, pk):
-#     is_active = request.POST.get("active") == "true"
-#     rule = LogicController.objects.get(id=pk)
-#     rule.active = is_active
-#     rule.save()
-#     return JsonResponse({"success": True, "active": rule.active})
-
-
 @require_POST
 def toggle_logic_active(request, pk):
     try:
@@ -199,9 +166,24 @@ def toggle_logic_active(request, pk):
     return JsonResponse({'success': True, 'active': rule.active})
 
 
-def delete_logic_rule_view(request, pk):
-    logic_rule = get_object_or_404(LogicController, pk=pk)
+def rule_action(request, pk):
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON'}, status=400)
 
-    if request.method == 'POST':
-        logic_rule.delete()
-        return redirect('devices:details')
+    action = data.get('action')
+    if not isinstance(action, str):
+        return JsonResponse({'success': False, 'error': 'Invalid action value'}, status=400)
+
+    try:
+        rule = LogicController.objects.get(pk=pk)
+    except LogicController.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Not found'}, status=404)
+
+    if action == 'delete':
+        rule.delete()
+    else:
+        return JsonResponse({'success': False, 'error': 'Action not recognized'}, status=400)
+
+    return JsonResponse({'success': True, 'action': action})

@@ -12,6 +12,5 @@ urlpatterns = [
     path('rooms/<int:pk>/delete/', delete_device_view, name='delete_room'),
     path('logic/<int:pk>/toggle-active/',
          toggle_logic_active, name='toggle_logic_active'),
-    path('logic/<int:pk>/delete/', delete_logic_rule_view,
-         name='delete_logic_rule_view'),
+    path('logic/<int:pk>/rule-action/', rule_action, name='rule_action'),
 ]
