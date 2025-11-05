@@ -19,6 +19,15 @@ class DeviceType(models.Model):
     def __str__(self):
         return self.type_name
 
+    def get_rule_types(self) -> list:
+        """Returns str list of enabled logic types"""
+        result = []
+        if self.enable_thermal:
+            result.append("thermal")
+        if self.enable_time:
+            result.append("time")
+        return result
+
 
 class Device(models.Model):
     device_name = models.CharField("name", max_length=200)
@@ -33,11 +42,11 @@ class Device(models.Model):
     def __str__(self):
         return self.device_name
 
-    def change_state(self):
-        self.state = not self.state
+    def set_state(self, value: bool):
+        self.state = value
 
     def turn_on(self):
-        self.state = False
+        self.set_state(True)
 
     def turn_off(self):
-        self.state = True
+        self.set_state(False)

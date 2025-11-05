@@ -1,10 +1,14 @@
-from logic_module.models import LogicController
 
 
 class LogicModule:
     """Base class for rule controls"""
 
-    def __init__(self, controller: LogicController):
+    def __init__(self, controller):
+        from logic_module.models import LogicController
+
+        if not isinstance(controller, LogicController):
+            raise TypeError("controller must be a LogicController instance")
+
         self.controller = controller
 
         self.__active = True
@@ -46,15 +50,23 @@ class LogicModule:
 
     def check(self) -> bool:
         try:
-            self.get_current_value()
+            self.update_current_value()
             result = self.check_condition()
         except Exception as e:
             print(f'Error during checking limits: {e}')
             result = False
         return result
 
-    def get_current_value(self):
-        self.__current_value = 0
+    def update_current_value(self):
+        raise NotImplementedError("Method to be implemented in child class.")
 
     def check_condition(self) -> bool:
-        result = self.low_limit < self.current_value < self.high_limit
+        try:
+            if (not self.low_limit) or (not self.high_limit):
+                raise ValueError("Limit is not set")
+            if not self.current_value:
+                raise ValueError("No current value")
+            return self.low_limit < self.current_value < self.high_limit
+        except Exception as e:
+            print("Error while checking condition:", e)
+            return False
