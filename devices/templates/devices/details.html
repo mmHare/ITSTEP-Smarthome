@@ -17,9 +17,8 @@
 <h3>Rules set for this device:</h3>
 <ul>
     {% for rule in logic_controllers %}
-        <li>
+        <li id="rule_{{ rule.id }}">
             <p>
-            <form method="POST" action="{% url 'devices:delete_logic_rule_view' rule.id %}" style="display:inline;">
                 {% csrf_token %}
                 <input
                     type="checkbox"
@@ -27,23 +26,9 @@
                     {% if rule.active %}checked{% endif %}
                     onchange="toggleRuleActive({{ rule.id }}, this.checked)"
                 >
-                {% comment %} <label for="rule_{{ rule.id }}">Active</label> {% endcomment %}
                 {{ rule.name }}    
-
-                <button class="btn btn-danger" type="submit" onclick="return confirm('Are you sure you want to delete {{ rule.name }}?')">Delete</button>
-            </form>
+                <button class="btn btn-danger" type="submit" onclick="sendRuleAction({{ rule.id }}, 'delete')">Delete</button>
             </p>
-            
-
-
-            {% comment %} <input
-                type="checkbox"
-                id="rule_{{ rule.id }}"
-                {% if rule.active %}checked{% endif %}
-                onchange="toggleRuleActive({{ rule.id }}, this.checked)"
-            >
-            {% comment %} <label for="rule_{{ rule.id }}">Active</label> 
-            {{ rule.name }} {% endcomment %}
         </li>
     {% empty %}
         <li>No rules set yet.</li>
@@ -130,6 +115,29 @@ function toggleRuleActive(ruleId, isActive) {
     .catch(error => {
         console.error('Error updating rule:', error);
         alert("Network error while updating rule state");
+    });
+}
+
+function sendRuleAction(ruleId, pAction) {
+    fetch(`/devices/logic/${ruleId}/rule-action/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': getCookie('csrftoken'),
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify({ action: pAction })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById(`rule_${ruleId}`).closest('li').remove();
+        } else {
+            alert("Failed to act on rule: " + (data.error || 'unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error sending rule action:', error);
+        alert("Network error whilesending rule action");
     });
 }
 
