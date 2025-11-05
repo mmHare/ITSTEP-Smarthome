@@ -1,16 +1,11 @@
-{% extends "smarthome/base.html" %}
+{% extends "smarthome/base_user.html" %}
 
 {% block title %}Home - SmartHome{% endblock %}
 
 {% block content %}
+
+<div class="container">
 <h1>Welcome, {{ user_name }}!</h1>
+</div>
 
-<p><button onclick="window.location='{% url 'admin:index' %}'">Administration panel</button></p>
-<p><button onclick="window.location='{% url 'devices:home' %}'">Devices</button></p>
-<p><button onclick="window.location='{% url 'devices:room_list' %}'">Room list</button></p>
-
-<form method="POST" action="{% url 'smarthome:logout' %}">
-    {% csrf_token %}
-    <button type="submit">Logout</button>
-</form>
 {% endblock %}

@@ -20,6 +20,13 @@ def home_view(request):
     return render(request, 'smarthome/home.html', {'user_name': user_name})
 
 
+def homepage_view(request):
+    return render(request, 'smarthome/homepage.html')
+
+def about_view(request):
+    return render(request, 'smarthome/about.html')
+
+
 # def login_view(request):
 #     if request.method == 'POST':
 #         username = request.POST.get('username')

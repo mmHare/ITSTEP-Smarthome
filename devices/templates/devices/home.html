@@ -1,9 +1,10 @@
-{% extends "smarthome/base.html" %}
+{% extends "smarthome/base_user.html" %}
 
 {% block title %}Home - SmartHome{% endblock %}
 
 {% block content %}
-<h1>Your devices:</h1>
+<div class="container">
+<h2>Your devices:</h2>
 
 {% if devices %}
     <ul>
@@ -26,11 +27,7 @@
     <p>You have no devices yet.</p>
 {% endif %}
 
-<button onclick="window.location='{% url 'devices:new_device' %}'">+ Add device</button>
+<button class="buttonDeviceNew" onclick="window.location='{% url 'devices:new_device' %}'">+ Add device</button>
 <p/>
-
-<form method="POST" action="{% url 'smarthome:home' %}">
-    {% csrf_token %}
-    <button type="submit">Back to user panel</button>
-</form>
+</div>
 {% endblock %}

@@ -1,15 +1,21 @@
-{% extends "smarthome/base.html" %}
+{% extends "smarthome/master.html" %}
 
 {% block title %}Login - SmartHome{% endblock %}
 
 {% block content %}
-<h2>Logowanie</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Zaloguj się</button>
-</form>
-<p>Nie masz konta? <a href="{% url 'smarthome:register' %}">Zarejestruj się</a></p>
+<div class="container">
+    <h2>Login</h2>
+
+    <div>
+    <form class="form-with-validation" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Zaloguj się</button>
+    </form>
+    </div>
+
+    <p>Nie masz konta? <a href="{% url 'smarthome:register' %}">Zarejestruj się</a></p>
+</div>
 {% endblock %} 
 
 

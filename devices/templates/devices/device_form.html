@@ -1,17 +1,21 @@
-{% extends "smarthome/base.html" %}
+{% extends "smarthome/base_user.html" %}
 
 {% block title %}
     {% if form.instance.pk %}Edit Device{% else %}New Device{% endif %}
 {% endblock %}
 
 {% block content %}
-<h1>{% if form.instance.pk %}Edit Device{% else %}New Device{% endif %}</h1>
+<div class="container">
+<h2>{% if form.instance.pk %}Edit Device{% else %}New Device{% endif %}</h2>
 
-<form method="post">
+    <div>
+    <form class="form-with-validation" method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Save</button>
-</form>
+    </form>
+    </div>
 
 <p><a href="{% url 'devices:home' %}">Cancel</a></p>
+</div>
 {% endblock %}
