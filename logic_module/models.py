@@ -5,13 +5,13 @@ from logic_module.logic.logic_map import LOGIC_MAP
 
 
 class LogicController(models.Model):
+    # used for DeviceDetailView
     LOGIC_CHOICES = [
         ('thermal', 'Thermal Logic'),
         ('time', 'Time Logic'),
     ]
 
     name = models.CharField("name", max_length=200, default="Rule")
-    # logic_type = models.CharField(max_length=20, choices=LOGIC_CHOICES)
     mac_address = models.CharField(max_length=11)
     active = models.BooleanField(default=True)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
@@ -25,9 +25,19 @@ class LogicController(models.Model):
     def __str__(self):
         return self.name
 
-    def update_device_state(self):
+    def update_value(self, num_value):
+        self.numeric_value = num_value  # set current value from device
+
+    def get_state(self) -> bool:
+        """Checks if conditions for rules are met"""
+        # if controller is off, conditions are not checked
+        if not self.active:
+            return
         try:
             result = self.device.state
+            if not self.numeric_value:
+                raise Exception("Controller has no current value")
+
             for logic in self.device.device_type.get_rule_types():
                 LogicClass = LOGIC_MAP.get(logic)
                 if not LogicClass:
@@ -35,7 +45,6 @@ class LogicController(models.Model):
                 logic_instance = LogicClass(self)
                 result = result or logic_instance.check()
 
-            self.device.state = result
-            self.device.save()
+            return result
         except Exception as e:
             print("Error while updating device state:", e)

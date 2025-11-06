@@ -13,17 +13,16 @@ class ThermalLogicModule(LogicModule):
 
         super().__init__(controller)
 
-        self.high_limit = self.controller.time_max
-        self.low_limit = self.controller.time_min
+        self.high_limit = self.controller.numeric_max
+        self.low_limit = self.controller.numeric_min
         self.current_value = self.controller.numeric_value
 
         if self.current_value == None:
             self.current_value = self._initial_temperature  # temperature in Celsius
 
-    def update_current_value(self, current_temp: float):
+    def update_current_value(self):
         try:
-            current_temp = float(current_temp)
-            self.current_value = current_temp
+            self.current_value = float(self.current_value)
         except ValueError:
             print('Wrong value. Temperature should be numeric.')
         except Exception as e:

@@ -29,7 +29,7 @@ class LogicModule:
         return self.__current_value
 
     @current_value.setter
-    def currente_value(self, value):
+    def current_value(self, value):
         self.__current_value = value
 
     @property

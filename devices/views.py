@@ -11,10 +11,10 @@ from logic_module.forms import LogicControllerForm
 from logic_module.models import LogicController
 
 from .forms import DeviceForm
-from .models import Device, DeviceRoom, DeviceType
+from .models import Device, DeviceRoom
 
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
 
@@ -42,7 +42,6 @@ class DeviceDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         device = self.get_object()
         context["logic_form"] = LogicControllerForm()
-        # (show_numeric=False, show_time=False)
         context["logic_types"] = LogicController.LOGIC_CHOICES
         context["logic_controllers"] = LogicController.objects.filter(
             device=device)
