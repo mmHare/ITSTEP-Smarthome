@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'smarthome.apps.SmarthomeConfig',
     'devices.apps.DevicesConfig',
     'logic_module.apps.LogicModuleConfig',
+    'stats.apps.StatsConfig',
     'debug_toolbar',
 ]
 

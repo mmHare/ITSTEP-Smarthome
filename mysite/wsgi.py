@@ -17,19 +17,6 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mysite.settings')
 
 application = get_wsgi_application()
 
-# def check_devices():
-#     from logic_module.models import LogicController
-#     while True:
-#         try:
-#             for device_control in LogicController.objects.all():
-#                 if device_control.active:
-#                     device_control.update_device_state()
-#         except OperationalError:
-#             # Database might not be ready yet
-#             time.sleep(5)
-#             continue
-#         time.sleep(30)
-
 
 def start_device_check_thread():
     from logic_module.models import LogicController
