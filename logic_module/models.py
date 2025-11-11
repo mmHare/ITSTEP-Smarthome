@@ -6,11 +6,13 @@ from logic_module.logic.logic_map import LOGIC_MAP
 
 
 class LogicController(models.Model):
-    # used for DeviceDetailView
-    LOGIC_CHOICES = [
-        ('thermal', 'Thermal Logic'),
-        ('time', 'Time Logic'),
-    ]
+    # used for DeviceDetailView; deprecated
+    # LOGIC_CHOICES = [
+    #     ('thermal', 'Thermal Logic'),
+    #     ('time', 'Time Logic'),
+    # ]
+
+    item_kind = "logic rule"
 
     name = models.CharField("name", max_length=200, default="Rule")
     mac_address = models.CharField(max_length=11)
@@ -22,11 +24,6 @@ class LogicController(models.Model):
     numeric_min = models.FloatField(default=0)
     time_min = models.TimeField(default=datetime.time(8, 00))
     time_max = models.TimeField(default=datetime.time(22, 00))
-
-    # numeric_max = models.FloatField(blank=True, null=True)
-    # numeric_min = models.FloatField(blank=True, null=True)
-    # time_max = models.TimeField(blank=True, null=True)
-    # time_min = models.TimeField(blank=True, null=True)
 
     def __str__(self):
         return self.name

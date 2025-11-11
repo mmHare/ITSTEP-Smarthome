@@ -9,6 +9,7 @@ from django.utils.decorators import method_decorator
 
 from logic_module.forms import LogicControllerForm
 from logic_module.models import LogicController
+from stats.stats_service import StatsService
 
 from .forms import DeviceForm
 from .models import Device, DeviceRoom
@@ -48,7 +49,7 @@ class DeviceDetailView(generic.DetailView):
 
         context["logic_form"] = LogicControllerForm(
             show_numeric=show_numeric, show_time=show_time)
-        context["logic_types"] = LogicController.LOGIC_CHOICES
+        # context["logic_types"] = LogicController.LOGIC_CHOICES
         context["logic_controllers"] = LogicController.objects.filter(
             device=device)
         return context
@@ -71,6 +72,13 @@ class DeviceDetailView(generic.DetailView):
             logic.device = self.object
             # logic.logic_type = selected_type
             logic.save()
+
+            # success, so save history record
+            record_item = {"item_id": logic.id,
+                           "item_name": logic.name,
+                           "item_kind": logic.item_kind}
+            StatsService.save_user_action(request.user, 'add', record_item)
+
             return redirect("devices:details", pk=self.object.pk)
 
         # context = self.get_context_data()
@@ -166,6 +174,7 @@ def toggle_logic_active(request, pk):
 
 
 def rule_action(request, pk):
+    """Performs back-end action on rule according to sent json data"""
     try:
         data = json.loads(request.body.decode('utf-8'))
     except json.JSONDecodeError:
@@ -180,9 +189,18 @@ def rule_action(request, pk):
     except LogicController.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Not found'}, status=404)
 
+    # get item data for action history
+    record_item = {"item_id": rule.id,
+                   "item_name": rule.name,
+                   "item_kind": rule.item_kind}
+
+    # execute actions
     if action == 'delete':
         rule.delete()
     else:
         return JsonResponse({'success': False, 'error': 'Action not recognized'}, status=400)
+
+    # success, so save history record
+    StatsService.save_user_action(request.user, action, record_item)
 
     return JsonResponse({'success': True, 'action': action})

@@ -23,26 +23,10 @@ def home_view(request):
 def homepage_view(request):
     return render(request, 'smarthome/homepage.html')
 
+
 def about_view(request):
     return render(request, 'smarthome/about.html')
 
-
-# def login_view(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-
-#         try:
-#             user = HomeUser.objects.get(
-#                 user_name=username, user_password=password)
-#             # Save user info in session
-#             request.session['user_id'] = user.id
-#             request.session['user_name'] = user.user_name
-#             return redirect('smarthome:home')  # ✅ namespaced redirect
-#         except HomeUser.DoesNotExist:
-#             return render(request, 'smarthome/login.html', {'error': 'Invalid username or password'})
-
-#     return render(request, 'smarthome/login.html')
 
 def login_view(request):
     if request.method == 'POST':

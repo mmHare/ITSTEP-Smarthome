@@ -56,3 +56,7 @@ class Device(models.Model):
 
     def turn_off(self):
         self.set_state(False)
+
+    @property
+    def item_kind(self) -> str:
+        return self.device_type.type_name
