@@ -41,7 +41,13 @@ class DeviceDetailView(generic.DetailView):
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         device = self.get_object()
-        context["logic_form"] = LogicControllerForm()
+
+        # Fields are shown depending on what is enabled in current device's device type
+        show_numeric = device.device_type.get_show_numeric_fields()
+        show_time = device.device_type.get_show_time_fields()
+
+        context["logic_form"] = LogicControllerForm(
+            show_numeric=show_numeric, show_time=show_time)
         context["logic_types"] = LogicController.LOGIC_CHOICES
         context["logic_controllers"] = LogicController.objects.filter(
             device=device)
@@ -49,11 +55,10 @@ class DeviceDetailView(generic.DetailView):
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
-        selected_type = request.POST.get("logic_option")
 
-        # Decide which fields to show based on logic type
-        show_numeric = selected_type == 'thermal'
-        show_time = selected_type == 'time'
+        # Fields are shown depending on what is enabled in current device's device type
+        show_numeric = self.object.device_type.get_show_numeric_fields()
+        show_time = self.object.device_type.get_show_time_fields()
 
         form = LogicControllerForm(
             request.POST or None,
@@ -64,7 +69,7 @@ class DeviceDetailView(generic.DetailView):
         if form.is_valid():
             logic = form.save(commit=False)
             logic.device = self.object
-            logic.logic_type = selected_type
+            # logic.logic_type = selected_type
             logic.save()
             return redirect("devices:details", pk=self.object.pk)
 
@@ -108,9 +113,6 @@ def delete_device_view(request, pk):
         device.delete()
         return redirect('devices:home')
 
-    # Optional: confirmation page (could skip and delete immediately)
-    return render(request, 'devices/confirm_delete.html', {'device': device})
-
 
 def room_list_view(request):
     error_text = ''
@@ -125,7 +127,6 @@ def room_list_view(request):
 
         except DeviceRoom.DoesNotExist:
             error_text = 'Room does not exist'
-            # return render(request, 'devices/room_list.html', {'error': 'Room does not exist'})
 
     device_rooms = DeviceRoom.objects.filter()
 
@@ -152,7 +153,6 @@ def toggle_logic_active(request, pk):
 
     is_active = data.get('active')
     if not isinstance(is_active, bool):
-        # if the client sends strings, you could accept 'true'/'false' also
         return JsonResponse({'success': False, 'error': 'Invalid active value'}, status=400)
 
     try:

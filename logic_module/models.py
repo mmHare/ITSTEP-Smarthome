@@ -1,3 +1,4 @@
+import datetime
 from django.db import models
 
 from devices.models import Device
@@ -17,10 +18,15 @@ class LogicController(models.Model):
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
 
     numeric_value = models.FloatField(blank=True, null=True)
-    numeric_max = models.FloatField(blank=True, null=True)
-    numeric_min = models.FloatField(blank=True, null=True)
-    time_max = models.TimeField(blank=True, null=True)
-    time_min = models.TimeField(blank=True, null=True)
+    numeric_max = models.FloatField(default=0)
+    numeric_min = models.FloatField(default=0)
+    time_min = models.TimeField(default=datetime.time(8, 00))
+    time_max = models.TimeField(default=datetime.time(22, 00))
+
+    # numeric_max = models.FloatField(blank=True, null=True)
+    # numeric_min = models.FloatField(blank=True, null=True)
+    # time_max = models.TimeField(blank=True, null=True)
+    # time_min = models.TimeField(blank=True, null=True)
 
     def __str__(self):
         return self.name
