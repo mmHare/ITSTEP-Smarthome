@@ -7,7 +7,7 @@ from django.views.generic.edit import UpdateView
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 
-from logic_module.forms import LogicControllerForm, LogicControllerEditForm
+from logic_module.forms import LogicControllerForm
 from logic_module.models import LogicController
 
 from .forms import DeviceForm
