@@ -9,7 +9,7 @@ urlpatterns = [
     path('<int:pk>/edit/', DeviceUpdateView.as_view(), name='edit_device'),
     path('<int:pk>/delete/', delete_device_view, name='delete_device'),
     path('rooms/', room_list_view, name='room_list'),
-    path('rooms/<int:pk>/delete/', delete_device_view, name='delete_room'),
+    path('rooms/<int:pk>/delete/', delete_room_view, name='delete_room'),
     path('logic/<int:pk>/toggle-active/',
          toggle_logic_active, name='toggle_logic_active'),
     path('logic/<int:pk>/rule-action/', rule_action, name='rule_action'),

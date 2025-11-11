@@ -6,17 +6,19 @@
 
 <head>
   <title>{% block title %}{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="icon" type="image/x-icon" href="{% static 'icons/favicon.ico' %}">
   <script type="text/javascript" src="{% static 'js/darkmode.js' %}" defer></script>
-  <script type"text/javascript" src="{% static 'js/navbar_active.js' %}" defer></script>
+  <script type="text/javascript" src="{% static 'js/navbar_active.js' %}" defer></script>
 </head>
 
 <body>
+<div class="container">
   <ul class="navBar">
-    <li><a href='{% url "smarthome:homepage" %}'>Home</a></li>
-    <li><a href='{% url "smarthome:about" %}'>What is SHJ?</a></li>
-    <li><a href='{% url "smarthome:login" %}'>Login</a></li>
-    <li><a href='{% url "smarthome:register" %}'>Register a new user</a></li>
+    <li><a href="{% url 'smarthome:homepage' %}">Home</a></li>
+    <li><a href="{% url 'smarthome:about' %}">What is SHJ?</a></li>
+    <li><a href="{% url 'smarthome:login' %}">Login</a></li>
+    <li><a href="{% url 'smarthome:register' %}">Register a new user</a></li>
   </ul>
   <header>
     <button id="theme-switch" title="Change Theme">
@@ -27,11 +29,12 @@
 
 {% block content %}
 {% endblock %}
-
+</div>
+  <div class="footer">
   <footer>
       <p>&copy; 2025 SmartHome</p>
   </footer>
-
+  </div>
 </body>
 
 </html>

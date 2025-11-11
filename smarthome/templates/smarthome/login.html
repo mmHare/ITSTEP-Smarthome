@@ -3,19 +3,16 @@
 {% block title %}Login - SmartHome{% endblock %}
 
 {% block content %}
-<div class="container">
-    <h2>Login</h2>
+<div class="header"><h2>Login</h2></div>
 
-    <div>
+    <div class="content">
     <form class="form-with-validation" method="post">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Zaloguj się</button>
     </form>
-    </div>
-
     <p>Nie masz konta? <a href="{% url 'smarthome:register' %}">Zarejestruj się</a></p>
-</div>
+    </div>
 {% endblock %} 
 
 

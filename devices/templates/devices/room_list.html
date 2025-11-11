@@ -3,10 +3,10 @@
 {% block title %}Home - SmartHome{% endblock %}
 
 {% block content %}
-<div class="container">
-<h2>Rooms:</h2>
+<div class="header"><h2>Rooms:</h2></div>
 
-<div>
+<div class="content">
+{% if rooms %}
 <ul>
     {% for room in rooms %}
         <li class="rooms">
@@ -23,16 +23,18 @@
             
         </li>
     {% endfor %}
+{% else %}
+    <p>No rooms set.</p>
+{% endif %}
     <form method="POST" style="display:inline;">
         {% csrf_token %}
-        <input type="text" name="name" placeholder="" required>
+        <input type="text" name="name" placeholder="Room name" required>
         <button type="submit">Add</button>
     </form>
     {% if error %}
         <p class="error">{{ error }}</p>
     {% endif %}
 </ul>
-</div>
 
 </div>
 {% endblock %}

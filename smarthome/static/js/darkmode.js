@@ -16,8 +16,8 @@ if(darkmode === "active") enableDarkmode()      // przy ładowaniu strony sprawd
 themeSwitch.addEventListener("click", () => {
     darkmode = localStorage.getItem('darkmode') // sprawdza stan darkmode przy każdym kliknięciu
     
-    darkmode !== "active" ? enableDarkmode() : disableDarkmode()
-    // ^ szybszy syntax niż (list comprehension?:p)
+    darkmode !== "active" ? enableDarkmode() : disableDarkmode() // list comprehension?:p
+    // ^ szybszy syntax niż: 
     // if(darkmode !== "active"){
     //     enableDarkmode()
     // }

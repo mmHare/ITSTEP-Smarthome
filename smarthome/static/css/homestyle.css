@@ -13,6 +13,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
@@ -27,53 +28,44 @@ body {
 
 .container {
   display: grid;
-  grid-template-columns: 1fr 1.8fr 1fr;
-  grid-template-rows:  auto auto auto;
+  grid-template-areas: 
+    "navbar"
+    "header"
+    "main"
+    "footer";
 }
 
-.container h1 {
-  grid-column: 1 / span 3;
+.header {
+  grid-area: header;
   text-align: center;
 }
 
-.container h2 {
-  grid-column: 2;
-  text-align: center;
+.header > h1 {
+  padding: 2rem;
 }
 
-.container h3 {
-  grid-column: 2;
+.header > h2 {
+  padding: 1rem;
 }
 
-.container p {
-  grid-column: 2;
+
+.content {
+  grid-area: main;
+  padding: 1rem;
 }
 
-.container div {
-  grid-column: 2;
+.content > table {
+  justify-self: center;
 }
 
-h1 {
-  margin: 2vw;
-  font-size: 3vw;
+.footer > footer {
+  grid-area: footer;
+  margin-left: 10px;
+  margin-top: 10px;
+  font-size: 0.8em;
+  opacity: 0.7;
+  color: var(--text-color);
 }
-
-h2 {
-  margin: 1vw;
-  font-size: 2vw;
-}
-
-h3 {
-  margin: 0.5vw;
-  font-size: 1.2vw;
-  text-align: left;
-}
-
-p {
-  text-align: left;
-  font-size: 1vw;
-}
-
 
 /* Kolor linków */
 a {
@@ -87,11 +79,11 @@ a:hover {
 
 
 button {
-    padding: 0.4vw 0.5vw;
+    padding: 0.4rem 0.5rem;
     border: none;
-    max-width: 10vw;
-    border-radius: 0.4vw;
-    font-size: 1vw;
+    max-width: 10rem;
+    border-radius: 0.4rem;
+    font-size: 1rem;
     cursor: pointer;
     background-color: #007bff;
     color: white;
@@ -104,19 +96,18 @@ button:hover {
 
 .buttonLogout {
   position: fixed;
-  top: 8vw;
-  right: 1vw;
+  top: 8rem;
+  right: 1rem;
 }
 
-.buttonDeviceNew {
-  grid-column: 2;
+.content > button {
   justify-self: center;
 }
 
 .buttonDelete {
   background-color: #F00;
-  font-size: 0.8vw;
-  padding: 0.3vw 0.4vw;
+  font-size: 0.8rem;
+  padding: 4px 5px;
 }
 
 .buttonDelete:hover {
@@ -124,33 +115,61 @@ button:hover {
   transition: background-color 0.2s ease;
 }
 
-footer {
-  position: fixed;
-  bottom: 1vw;
-  left: 1vw;
-  font-size: 0.8em;
-  opacity: 0.75;
-  color: var(--text-color);
-}
 
 li.rooms {
-  margin-top: 0.6vw;
-  margin-bottom: 0.6vw;
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
   list-style-position: inside;
+  list-style-type: square;
+}
+
+li.devices {
+  margin-top: 0.6rem;
+  margin-bottom: 0.6rem;
+  list-style-type: none;
+}
+
+
+/* TABELE */
+.tableDevices {
+  border: 1px solid;
+  border-collapse: collapse;
+  width: auto;
+}
+
+.tableDevices th, td {
+  padding: 10px;
+  border-bottom: 1px solid;
+}
+
+.tableRules {
+  border: 1px solid;
+  border-collapse: collapse;
+  width: auto;
+  text-align: center;
+}
+
+.tableRules th, td {
+  padding: 10px;
+  border-bottom: 1px solid;
 }
 
 /* Pasek nawigacyjny */
 .navBar {
-  font-size: 1vw;
+  font-size: 1rem;
   background-color: var(--text-color);
   display: flex;
   justify-content: left;
 }
 
+.navBar li {
+  list-style-type: none;
+}
+
 .navBar li a {
   display: block;
   color: var(--base-color); 
-  padding: 0.8vw 1.9vw;
+  padding: 0.8rem 1rem;
   text-decoration: none;
 }
 
@@ -159,20 +178,26 @@ li.rooms {
   color: var(--text-color);
 }
 
-.navBar li a.active {
+.navBar li a[aria-current="page"] {
   background-color: var(--base-color);
   color: var(--text-color);
+  opacity: 0.9;
 }
+
+/* FORMULARZE */
+/* .formDeviceDetails {
+
+} */
 
 
 /* Styl dla formularza login i rejestracji Django */
 .form-with-validation {
-    font-size: 0.9vw;
-    padding: 1vw;
+    font-size: 0.9rem;
+    padding: 1rem;
     display: flex;
     flex-flow: column;
     text-align: justify;
-    gap: 1vw;
+    gap: 1rem;
 }
 
 .form-with-validation ul {
@@ -180,15 +205,25 @@ li.rooms {
 }
 
 .form-with-validation div {
-    gap: 0.5vw;
+    gap: 0.5rem;
 }
 
-.form-with-validation input {
-    padding: 0.4vw;
-    max-width: 12vw;
-    border-radius: 0.5vw;
+.form-with-validation input{
+    padding: 0.4rem;
+    max-width: 12rem;
+    border-radius: 0.5rem;
     border: none;
-    font-size: 0.9vw;
+    font-size: 0.9rem;
+    color: var(--base-color);
+    background-color: var(--text-color);
+}
+
+.form-with-validation input:autofill {
+    padding: 0.4rem;
+    max-width: 12rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-size: 0.9rem;
     color: var(--base-color);
     background-color: var(--text-color);
 }
@@ -196,9 +231,9 @@ li.rooms {
 .form-with-validation select {
   background-color: var(--text-color);
   color: var(--base-color);
-  padding: 0.4vw;
-  border-radius: 0.5vw;
-  font-size: 0.9vw;
+  padding: 0.4rem;
+  border-radius: 0.5rem;
+  font-size: 0.9rem;
 }
 
 .form-with-validation div button {
@@ -206,21 +241,21 @@ li.rooms {
 }
 
 .form-submit {
-    padding: 0.5vw;
-    border-radius: 0.5vw;
-    width: 8vw;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+    width: 8rem;
     color: azure;
 }
 
 .helptext {
-    font-size: 0.8vw;
-    margin-left: 1vw;
+    font-size: 0.8rem;
+    margin-left: 1rem;
     opacity: 0.8;
 }
 
 .helptext ul {
     list-style-type: none;
-    font-size: 0.8vw;
+    font-size: 0.8rem;
     color: #0056b3;
 }
 
@@ -235,8 +270,8 @@ li.rooms {
 
 /* przycisk motywu strony */
 #theme-switch {
-  height: 3vw;
-  width: 3vw;
+  height: 3rem;
+  width: 3rem;
   padding: 0;
   border-radius: 50%;
   background-color: var(--text-color);
@@ -244,14 +279,18 @@ li.rooms {
   justify-content: center;
   align-items: center;
   position: fixed;
-  top: 4vw;
-  right: 1vw;
+  top: 4rem;
+  right: 1rem;
+}
+
+#theme-switch:hover {
+  opacity: 0.8;
 }
 
 #theme-switch svg {
   fill: var(--base-color);
-  height: 1.75vw;
-  width: 1.75vw;
+  height: 1.75rem;
+  width: 1.75rem;
 }
 
 #theme-switch svg:last-child {

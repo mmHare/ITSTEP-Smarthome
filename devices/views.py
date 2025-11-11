@@ -86,6 +86,10 @@ class DeviceDetailView(generic.DetailView):
         context["logic_form"] = form
         return self.render_to_response(context)
 
+    def edit_value(request):
+        form = LogicControllerEditForm()
+        return render(request, 'devices/details.html', {'form': form})
+
 
 def new_device_view(request):
     if request.method == 'POST':
@@ -144,7 +148,7 @@ def room_list_view(request):
     })
 
 
-def delete_device_view(request, pk):
+def delete_room_view(request, pk):
     room = get_object_or_404(DeviceRoom, pk=pk)
 
     if request.method == 'POST':
@@ -197,6 +201,9 @@ def rule_action(request, pk):
     # execute actions
     if action == 'delete':
         rule.delete()
+    elif action == 'edit':
+        param_dict = data.get('param_dict')
+        rule.update_value(param_dict)
     else:
         return JsonResponse({'success': False, 'error': 'Action not recognized'}, status=400)
 
