@@ -30,3 +30,10 @@ class LogicControllerForm(forms.ModelForm):
     #     if not show_time:
     #         del self.fields['time_max']
     #         del self.fields['time_min']
+    
+# class LogicControllerEditForm(forms.ModelForm):
+#     class Meta:
+#         model = LogicController
+#         fields = (
+#             'numeric_value',
+#         )

@@ -1,44 +1,59 @@
-{% extends "smarthome/base.html" %}
+{% extends "smarthome/base_user.html" %}
 
 {% block title %}{{ device.device_name }} - Details{% endblock %}
 
 {% block content %}
-<h1>{{ device.device_name }}</h1>
-<p><strong>Type:</strong> {{ device.device_type }}</p>
+{% load static %}
+<script type="text/javascript" src="{% static 'js/device_details.js' %}" defer></script>
 
-{% if device.device_room %}
-    <p><strong>Room:</strong> {{ device.device_room }}</p>
-{% else %}
-    <p><strong>Room:</strong> None</p>
-{% endif %}
-
-<br>
+<div class="container">
+<div class="header"><h2>Device: {{ device.device_name }}</h2></div>
+<div class="content">
+<p><strong>Type: </strong>{{ device.device_type }}</p>
+<p><strong>Room: </strong>{% if device.device_room %}{{ device.device_room }}{% else %}None{% endif %}</p>
+<p><strong>On/Off: </strong>{% if device.state %}On{% else %}Off{% endif %}</p>
 
 <h3>Rules set for this device:</h3>
-<ul>
+{% if logic_controllers %}
+<table class="tableRules">
+    <tr>
+        <th>Active/Inactive</th>
+        <th>Name</th>
+        <th>Numeric min</th>
+        <th>Numeric max</th>
+        <th>Time min</th>
+        <th>Time max</th>
+        <th>Value</th>
+        <th>Set new value</th>
+    </tr>
     {% for rule in logic_controllers %}
-        <li id="rule_{{ rule.id }}">
-            <p>
+        <tr id="rule_{{ rule.id }}">
+            <td>{% csrf_token %}
+                <input type="checkbox" id="rule_{{ rule.id }}" {% if rule.active %}checked{% endif %}
+                    onchange="toggleRuleActive({{ rule.id }}, this.checked)"></td>
+            <td>{{ rule.name }}</td>
+            <td>{{ rule.numeric_min }}</td>
+            <td>{{ rule.numeric_max }}</td>
+            <td>{{ rule.time_min }}</td>
+            <td>{{ rule.time_max }}</td>
+            <td>{{ rule.numeric_value }}</td>
+            <form method="POST" action="{% url 'devices:details' device.id %}">
                 {% csrf_token %}
-                <input
-                    type="checkbox"
-                    id="rule_{{ rule.id }}"
-                    {% if rule.active %}checked{% endif %}
-                    onchange="toggleRuleActive({{ rule.id }}, this.checked)"
-                >
-                {{ rule.name }}    
-                <button class="btn btn-danger" type="submit" onclick="sendRuleAction({{ rule.id }}, 'delete')">Delete</button>
-            </p>
-        </li>
-    {% empty %}
-        <li>No rules set yet.</li>
+                {{ form }}
+                <td><label for="rule_new_value">New value:</label><input type="number" name="rule_new_value" id="rule_{{ rule.id }}_value"></td>
+                <td><button type="submit" onclick="sendRuleAction({{ rule.id }}, 'edit')">Set new value</button></td>
+            </form>
+            <td><button class="buttonDelete" type="submit" onclick="sendRuleAction({{ rule.id }}, 'delete')">Delete</button></td>
+            </tr>
     {% endfor %}
-</ul>    
+</table>
+{% else %}
+<p>No rules set yet</p>
+{% endif %}
 
 <h3>Add a new rule:</h3>   
 <form method="POST" action="{% url 'devices:details' device.id %}">
     {% csrf_token %}
-  
     <label for="logic_option">Choose logic type:</label>
     <select name="logic_option" id="logic_option">
         {% for code, name in logic_types %}
@@ -50,98 +65,9 @@
         {{ logic_form.as_p }}
     </div>
 
-    <button type="submit">Add Rule</button>
+    <button type="submit">+ Add Rule</button>
 </form>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const selector = document.getElementById('logic_option');
-    if (!selector) return; // safety check
-    const formFields = document.getElementById('logic-form-fields');
-
-    function updateFields() {
-        const selected = selector.value;
-
-        // Hide everything first
-        formFields.querySelectorAll('p').forEach(p => p.style.display = 'none');
-
-        // Always show "active" if it exists
-        {% comment %} const activeField = formFields.querySelector('[name="active"]');
-        if (activeField) activeField.closest('p').style.display = 'block'; {% endcomment %}
-        const nameField = formFields.querySelector('[name="name"]');
-        if (nameField) nameField.closest('p').style.display = 'block';
-
-        if (selected === 'thermal') {
-            ['numeric_min', 'numeric_max'].forEach(name => {
-                const el = formFields.querySelector(`[name="${name}"]`);
-                if (el) el.closest('p').style.display = 'block';
-            });
-        } else if (selected === 'time') {
-            ['time_min', 'time_max'].forEach(name => {
-                const el = formFields.querySelector(`[name="${name}"]`);
-                if (el) el.closest('p').style.display = 'block';
-            });
-        }
-    }
-
-    // Run once on page load
-    updateFields();
-    // Run every time selection changes
-    selector.addEventListener('change', updateFields);
-});
-
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
-}
-
-function toggleRuleActive(ruleId, isActive) {
-    fetch(`/devices/logic/${ruleId}/toggle-active/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken'),
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: JSON.stringify({ active: !!isActive })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            alert("Failed to update rule state: " + (data.error || 'unknown error'));
-        }
-    })
-    .catch(error => {
-        console.error('Error updating rule:', error);
-        alert("Network error while updating rule state");
-    });
-}
-
-function sendRuleAction(ruleId, pAction) {
-    fetch(`/devices/logic/${ruleId}/rule-action/`, {
-        method: 'POST',
-        headers: {
-            'X-CSRFToken': getCookie('csrftoken'),
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: JSON.stringify({ action: pAction })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById(`rule_${ruleId}`).closest('li').remove();
-        } else {
-            alert("Failed to act on rule: " + (data.error || 'unknown error'));
-        }
-    })
-    .catch(error => {
-        console.error('Error sending rule action:', error);
-        alert("Network error whilesending rule action");
-    });
-}
-
-</script>
+</div>
 
 {% if error %}
     <p class="error">{{ error }}</p>
@@ -150,6 +76,7 @@ function sendRuleAction(ruleId, pAction) {
 <br>
 
 <button onclick="window.location='{% url 'devices:home' %}'">Back</button>
+</div>
 {% endblock %}
 
 

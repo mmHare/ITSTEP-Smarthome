@@ -45,6 +45,9 @@ class Device(models.Model):
     def set_state(self, value: bool):
         self.state = value
 
+    def get_state(self):
+        return self.state
+
     def turn_on(self):
         self.set_state(True)
 

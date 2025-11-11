@@ -5,17 +5,14 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
-<h2>{% if form.instance.pk %}Edit Device{% else %}New Device{% endif %}</h2>
+<div class="header"><h2>{% if form.instance.pk %}Edit Device{% else %}New Device{% endif %}</h2></div>
 
-    <div>
+<div class="content">
     <form class="form-with-validation" method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Save</button>
     </form>
-    </div>
-
 <p><a href="{% url 'devices:home' %}">Cancel</a></p>
 </div>
 {% endblock %}
