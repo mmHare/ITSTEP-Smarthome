@@ -28,6 +28,12 @@ class DeviceType(models.Model):
             result.append("time")
         return result
 
+    def get_show_numeric_fields(self) -> bool:
+        return self.enable_thermal
+
+    def get_show_time_fields(self) -> bool:
+        return self.enable_time
+
 
 class Device(models.Model):
     device_name = models.CharField("name", max_length=200)

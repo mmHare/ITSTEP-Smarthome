@@ -1,3 +1,5 @@
 from django.contrib import admin
 
-# Register your models here.
+from logic_module.models import LogicController
+
+admin.site.register(LogicController)
