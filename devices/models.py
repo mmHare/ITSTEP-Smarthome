@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from stats.stats_service import StatsService
+
 
 class DeviceRoom(models.Model):
     room_name = models.CharField("name", max_length=200)
@@ -44,6 +46,7 @@ class Device(models.Model):
     device_room = models.ForeignKey(
         DeviceRoom, verbose_name="room", default=None, on_delete=models.SET_NULL, null=True, blank=True)
     state = models.BooleanField("on", default=False)
+    is_monitor_state = models.BooleanField("monitor state", default=False)
 
     def __str__(self):
         return self.device_name
@@ -63,3 +66,9 @@ class Device(models.Model):
     @property
     def item_kind(self) -> str:
         return self.device_type.type_name
+
+    def monitor_device(self):
+        if not self.is_monitor_state:
+            return
+
+        StatsService.save_device_state(self)
