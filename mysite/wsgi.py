@@ -60,4 +60,4 @@ def start_device_check_thread():
 
 
 # Uncomment to start background thread
-# start_device_check_thread()
+start_device_check_thread()

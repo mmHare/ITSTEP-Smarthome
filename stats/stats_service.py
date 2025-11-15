@@ -14,11 +14,15 @@ class StatsService:
             action (str): e.g. 'add', 'delete', 'edit'
             item (dict, optional): details of item that action was performed on (item_id, item_name)
         """
+
+        def action_str(action: str) -> str:
+            return action.strip().capitalize().replace('_', ' ')
+
         try:
             new_record = StatsUserAction(
                 user=user,
                 timestamp=timezone.now(),
-                user_action=action
+                user_action=action_str(action)
             )
             if item:
                 new_record.item_id = item.get("item_id")

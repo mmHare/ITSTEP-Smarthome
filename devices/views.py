@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.views import generic
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import UpdateView
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 
 from logic_module.forms import LogicControllerForm
@@ -86,9 +86,9 @@ class DeviceDetailView(generic.DetailView):
         context["logic_form"] = form
         return self.render_to_response(context)
 
-    def edit_value(request):
-        form = LogicControllerEditForm()
-        return render(request, 'devices/details.html', {'form': form})
+    # def edit_value(request):
+    #     form = LogicControllerEditForm()
+    #     return render(request, 'devices/details.html', {'form': form})
 
 
 def new_device_view(request):
@@ -198,16 +198,18 @@ def rule_action(request, pk):
                    "item_name": rule.name,
                    "item_kind": rule.item_kind}
 
+    parent_device = rule.device
+
     # execute actions
     if action == 'delete':
         rule.delete()
-    elif action == 'edit':
+    elif action == 'set_value':
         param_dict = data.get('param_dict')
-        rule.update_value(param_dict)
+        rule.update_value(param_dict['input_value_num'])
     else:
         return JsonResponse({'success': False, 'error': 'Action not recognized'}, status=400)
 
     # success, so save history record
     StatsService.save_user_action(request.user, action, record_item)
 
-    return JsonResponse({'success': True, 'action': action})
+    return JsonResponse({'success': True, 'action': action, 'details_url': reverse('devices:details', args=[parent_device.id])})

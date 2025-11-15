@@ -29,7 +29,12 @@ class LogicController(models.Model):
         return self.name
 
     def update_value(self, num_value):
-        self.numeric_value = num_value  # set current value from device
+        try:
+            # set current value from device
+            self.numeric_value = float(num_value)
+            self.save()
+        except:
+            raise
 
     def get_state(self) -> bool:
         """Checks if conditions for rules are met"""
@@ -46,7 +51,7 @@ class LogicController(models.Model):
                 if not LogicClass:
                     continue
                 logic_instance = LogicClass(self)
-                result = result or logic_instance.check()
+                result = result and logic_instance.check()
 
             return result
         except Exception as e:
