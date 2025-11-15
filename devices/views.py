@@ -70,25 +70,17 @@ class DeviceDetailView(generic.DetailView):
         if form.is_valid():
             logic = form.save(commit=False)
             logic.device = self.object
-            # logic.logic_type = selected_type
             logic.save()
 
             # success, so save history record
-            record_item = {"item_id": logic.id,
-                           "item_name": logic.name,
-                           "item_kind": logic.item_kind}
-            StatsService.save_user_action(request.user, 'add', record_item)
+            action = 'add'
+            StatsService.save_user_action(request.user, action, logic)
 
             return redirect("devices:details", pk=self.object.pk)
 
-        # context = self.get_context_data()
         context = self.get_context_data(object=self.object)
         context["logic_form"] = form
         return self.render_to_response(context)
-
-    # def edit_value(request):
-    #     form = LogicControllerEditForm()
-    #     return render(request, 'devices/details.html', {'form': form})
 
 
 def new_device_view(request):
@@ -96,16 +88,12 @@ def new_device_view(request):
         form = DeviceForm(request.POST)
         if form.is_valid():
             device = form.save(commit=False)  # don't save yet
-            device.device_user = request.user
+            device.device_user = request.user  # set user before saving
             device.save()
 
             # save to action history
-            record_item = {"item_id": device.id,
-                           "item_name": device.name,
-                           "item_kind": device.item_kind}
             action = 'add'
-            StatsService.save_user_action(
-                request.user, action, record_item)
+            StatsService.save_user_action(request.user, action, device)
 
             return redirect('devices:home')
         print('not valid')
@@ -131,12 +119,8 @@ def delete_device_view(request, pk):
 
     if request.method == 'POST':
         # save to action history
-        record_item = {"item_id": device.id,
-                       "item_name": device.name,
-                       "item_kind": device.item_kind}
         action = 'delete'
-        StatsService.save_user_action(
-            request.user, action, record_item)
+        StatsService.save_user_action(request.user, action, device)
 
         device.delete()
         return redirect('devices:home')
@@ -154,12 +138,8 @@ def room_list_view(request):
                     room = DeviceRoom.objects.create(room_name=name)
 
                     # save to action history
-                    record_item = {"item_id": room.id,
-                                   "item_name": room.name,
-                                   "item_kind": room.item_kind}
                     action = 'add'
-                    StatsService.save_user_action(
-                        request.user, action, record_item)
+                    StatsService.save_user_action(request.user, action, room)
 
         except DeviceRoom.DoesNotExist:
             error_text = 'Room does not exist'
@@ -177,11 +157,8 @@ def delete_room_view(request, pk):
 
     if request.method == 'POST':
         # save to action history
-        record_item = {"item_id": room.id,
-                       "item_name": room.name,
-                       "item_kind": room.item_kind}
         action = 'delete'
-        StatsService.save_user_action(request.user, action, record_item)
+        StatsService.save_user_action(request.user, action, room)
 
         room.delete()
         return redirect('devices:room_list')
@@ -207,11 +184,8 @@ def toggle_logic_active(request, pk):
     rule.save()
 
     # save to action history
-    record_item = {"item_id": rule.id,
-                   "item_name": rule.name,
-                   "item_kind": rule.item_kind}
     action = 'turn_on' if is_active else 'turn_off'
-    StatsService.save_user_action(request.user, action, record_item)
+    StatsService.save_user_action(request.user, action, rule)
 
     return JsonResponse({'success': True, 'active': rule.active})
 
@@ -232,12 +206,12 @@ def rule_action(request, pk):
     except LogicController.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Not found'}, status=404)
 
-    # get item data for action history
+    # get item data for action history, here in case of deletion
     record_item = {"item_id": rule.id,
                    "item_name": rule.name,
                    "item_kind": rule.item_kind}
 
-    parent_device = rule.device
+    parent_device = rule.device  # for redirect
 
     # execute actions
     if action == 'delete':
