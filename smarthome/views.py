@@ -2,6 +2,8 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import AuthenticationForm
 
+from stats.stats_service import StatsService
+
 from .forms import SignUpForm
 
 
@@ -43,6 +45,7 @@ def login_view(request):
         if form.is_valid():
             user = form.get_user()
             login(request, user)
+            StatsService.save_user_action(user, 'log_in')
             return redirect('smarthome:home')
     else:
         form = AuthenticationForm()
@@ -50,6 +53,7 @@ def login_view(request):
 
 
 def logout_view(request):
+    StatsService.save_user_action(request.user, 'log_out')
     logout(request)
     request.session.flush()
     return redirect('smarthome:login')
@@ -61,6 +65,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
+            StatsService.save_user_action(user, 'register')
             return redirect('smarthome:login')
         print('not valid')
     else:

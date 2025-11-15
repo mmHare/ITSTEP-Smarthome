@@ -6,7 +6,7 @@ from stats.models import StatsDeviceState, StatsUserAction
 
 class StatsService:
     @classmethod
-    def save_user_action(cls, user, action: str, item: dict = None):
+    def save_user_action(cls, user, action: str, item=None):
         """Saves history record of user action
 
         Args:
@@ -14,16 +14,27 @@ class StatsService:
             action (str): e.g. 'add', 'delete', 'edit'
             item (dict, optional): details of item that action was performed on (item_id, item_name)
         """
+
+        def action_str(action: str) -> str:
+            return action.strip().capitalize().replace('_', ' ')
+
         try:
             new_record = StatsUserAction(
                 user=user,
                 timestamp=timezone.now(),
-                user_action=action
+                user_action=action_str(action)
             )
             if item:
-                new_record.item_id = item.get("item_id")
-                new_record.item_name = item.get("item_name")
-                new_record.item_kind = item.get("item_kind")
+                if isinstance(item, dict):
+                    # check dictionary keys
+                    new_record.item_id = item.get("item_id")
+                    new_record.item_name = item.get("item_name")
+                    new_record.item_kind = item.get("item_kind")
+                else:
+                    # check object properties (models need to have it)
+                    new_record.item_id = getattr(item, "id", None)
+                    new_record.item_name = getattr(item, "name", None)
+                    new_record.item_kind = getattr(item, "item_kind", None)
 
             new_record.save()
         except Exception as e:

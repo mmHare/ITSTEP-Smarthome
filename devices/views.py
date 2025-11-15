@@ -4,7 +4,7 @@ from django.shortcuts import redirect, render
 from django.views import generic
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import UpdateView
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 
 from logic_module.forms import LogicControllerForm
@@ -70,25 +70,17 @@ class DeviceDetailView(generic.DetailView):
         if form.is_valid():
             logic = form.save(commit=False)
             logic.device = self.object
-            # logic.logic_type = selected_type
             logic.save()
 
             # success, so save history record
-            record_item = {"item_id": logic.id,
-                           "item_name": logic.name,
-                           "item_kind": logic.item_kind}
-            StatsService.save_user_action(request.user, 'add', record_item)
+            action = 'add'
+            StatsService.save_user_action(request.user, action, logic)
 
             return redirect("devices:details", pk=self.object.pk)
 
-        # context = self.get_context_data()
         context = self.get_context_data(object=self.object)
         context["logic_form"] = form
         return self.render_to_response(context)
-
-    def edit_value(request):
-        form = LogicControllerEditForm()
-        return render(request, 'devices/details.html', {'form': form})
 
 
 def new_device_view(request):
@@ -96,8 +88,12 @@ def new_device_view(request):
         form = DeviceForm(request.POST)
         if form.is_valid():
             device = form.save(commit=False)  # don't save yet
-            device.device_user = request.user
+            device.device_user = request.user  # set user before saving
             device.save()
+
+            # save to action history
+            action = 'add'
+            StatsService.save_user_action(request.user, action, device)
 
             return redirect('devices:home')
         print('not valid')
@@ -122,6 +118,10 @@ def delete_device_view(request, pk):
         Device, pk=pk, device_user=request.user)  # ensures ownership
 
     if request.method == 'POST':
+        # save to action history
+        action = 'delete'
+        StatsService.save_user_action(request.user, action, device)
+
         device.delete()
         return redirect('devices:home')
 
@@ -135,7 +135,11 @@ def room_list_view(request):
                 if DeviceRoom.objects.filter(room_name=name).exists():
                     error_text = 'This room is already in the list'
                 else:
-                    DeviceRoom.objects.create(room_name=name)
+                    room = DeviceRoom.objects.create(room_name=name)
+
+                    # save to action history
+                    action = 'add'
+                    StatsService.save_user_action(request.user, action, room)
 
         except DeviceRoom.DoesNotExist:
             error_text = 'Room does not exist'
@@ -152,6 +156,10 @@ def delete_room_view(request, pk):
     room = get_object_or_404(DeviceRoom, pk=pk)
 
     if request.method == 'POST':
+        # save to action history
+        action = 'delete'
+        StatsService.save_user_action(request.user, action, room)
+
         room.delete()
         return redirect('devices:room_list')
 
@@ -174,6 +182,11 @@ def toggle_logic_active(request, pk):
 
     rule.active = is_active
     rule.save()
+
+    # save to action history
+    action = 'turn_on' if is_active else 'turn_off'
+    StatsService.save_user_action(request.user, action, rule)
+
     return JsonResponse({'success': True, 'active': rule.active})
 
 
@@ -193,21 +206,23 @@ def rule_action(request, pk):
     except LogicController.DoesNotExist:
         return JsonResponse({'success': False, 'error': 'Not found'}, status=404)
 
-    # get item data for action history
+    # get item data for action history, here in case of deletion
     record_item = {"item_id": rule.id,
                    "item_name": rule.name,
                    "item_kind": rule.item_kind}
 
+    parent_device = rule.device  # for redirect
+
     # execute actions
     if action == 'delete':
         rule.delete()
-    elif action == 'edit':
+    elif action == 'set_value':
         param_dict = data.get('param_dict')
-        rule.update_value(param_dict)
+        rule.update_value(param_dict['input_value_num'])
     else:
         return JsonResponse({'success': False, 'error': 'Action not recognized'}, status=400)
 
     # success, so save history record
     StatsService.save_user_action(request.user, action, record_item)
 
-    return JsonResponse({'success': True, 'action': action})
+    return JsonResponse({'success': True, 'action': action, 'details_url': reverse('devices:details', args=[parent_device.id])})

@@ -62,7 +62,7 @@ class LogicModule:
 
     def check_condition(self) -> bool:
         try:
-            if (not self.low_limit) or (not self.high_limit):
+            if (not self.low_limit) and (not self.high_limit):
                 raise ValueError("Limit is not set")
             if not self.current_value:
                 raise ValueError("No current value")

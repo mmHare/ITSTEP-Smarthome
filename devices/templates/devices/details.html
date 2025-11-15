@@ -37,13 +37,12 @@
             <td>{{ rule.time_min }}</td>
             <td>{{ rule.time_max }}</td>
             <td>{{ rule.numeric_value }}</td>
-            <form method="POST" action="{% url 'devices:details' device.id %}">
-                {% csrf_token %}
-                {{ form }}
-                <td><label for="rule_new_value">New value:</label><input type="number" name="rule_new_value" id="rule_{{ rule.id }}_value"></td>
-                <td><button type="submit" onclick="sendRuleAction({{ rule.id }}, 'edit')">Set new value</button></td>
-            </form>
-            <td><button class="buttonDelete" type="submit" onclick="sendRuleAction({{ rule.id }}, 'delete')">Delete</button></td>
+            <td><label for="rule_new_value">New value:</label>
+                <input type="number" name="rule_new_value" id="rule_{{ rule.id }}_value" value={{ rule.numeric_value }}>
+            </td>
+            <td><button type="button" onclick="sendRuleAction({{ rule.id }}, 'set_value', 
+                    {input_value_num: document.getElementById('rule_{{ rule.id }}_value').value})">Set new value</button></td>
+            <td><button class="buttonDelete" type="button" onclick="sendRuleAction({{ rule.id }}, 'delete')">Delete</button></td>
             </tr>
     {% endfor %}
 </table>
@@ -54,13 +53,6 @@
 <h3>Add a new rule:</h3>   
 <form method="POST" action="{% url 'devices:details' device.id %}">
     {% csrf_token %}
-    {% comment %} <label for="logic_option">Choose logic type:</label>
-    <select name="logic_option" id="logic_option">
-        {% for code, name in logic_types %}
-            <option value="{{ code }}">{{ name }}</option>
-        {% endfor %}
-    </select> {% endcomment %}
-
     <div id="logic-form-fields">
         {{ logic_form }}
     </div>

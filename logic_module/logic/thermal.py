@@ -29,3 +29,14 @@ class ThermalLogicModule(LogicModule):
             print(f'Error while setting temperature:', e)
 
         return self.current_value
+
+    def check_condition(self) -> bool:
+        try:
+            if (not self.low_limit) and (not self.high_limit):  # if both are 0
+                raise ValueError("Limit is not set")
+            if not self.current_value:
+                raise ValueError("No current value")
+            return self.low_limit < self.current_value < self.high_limit
+        except Exception as e:
+            print("Error while checking condition:", e)
+            return False
