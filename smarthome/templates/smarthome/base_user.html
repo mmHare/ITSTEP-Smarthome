@@ -17,8 +17,9 @@
   <ul class="navBar">
     <li><a href="{% url 'smarthome:home' %}">Home</a></li>
     <li><a href="{% url 'devices:home' %}">Devices</a></li>
-    <li><a href="{% url 'devices:room_list' %}">Room list</a></li>
-    <li><a href="{% url 'admin:index' %}">Administration panel</a></li>
+    <li><a href="{% url 'devices:room_list' %}">Room List</a></li>
+    <li><a href="{% url 'smarthome:history' %}">User Action History</a></li>
+    <li><a href="{% url 'admin:index' %}">Administration Panel</a></li>
   </ul>
   <header>
     <button id="theme-switch" title="switch theme">
@@ -27,7 +28,11 @@
     </button>
     <form method="POST" action="{% url 'smarthome:logout' %}">
     {% csrf_token %}
-    <button class="buttonLogout" type="submit">Logout</button>
+    {% if user.is_staff %}    
+      <button class="buttonLogout admin" type="submit">Logout<br>(Admin)</button>
+    {% else %}    
+      <button class="buttonLogout" type="submit">Logout</button>
+    {% endif %}
     </form>
   </header>
 

@@ -1,0 +1,19 @@
+{% extends "smarthome/base_user.html" %}
+
+{% block title %}History - SmartHome{% endblock %}
+
+{% block content %}
+
+{% if user.is_staff %}
+
+{% else %}
+<div class="header"><h2>{{ user_name }}'s action history</h2></div>
+
+<div class="content">
+
+    
+</div>
+
+{% endif %}
+
+{% endblock %}
