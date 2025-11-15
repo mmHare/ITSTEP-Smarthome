@@ -5,13 +5,21 @@ from stats.stats_service import StatsService
 
 
 class DeviceRoom(models.Model):
+    item_kind = "room"
+
     room_name = models.CharField("name", max_length=200)
 
     def __str__(self):
         return self.room_name
 
+    @property
+    def name(self):
+        return self.room_name
+
 
 class DeviceType(models.Model):
+    item_kind = "device type"
+
     type_name = models.CharField("name", max_length=200)
     is_active = models.BooleanField("active", default=True)
 
@@ -19,6 +27,10 @@ class DeviceType(models.Model):
     enable_time = models.BooleanField("Enable time rules", default=False)
 
     def __str__(self):
+        return self.type_name
+
+    @property
+    def name(self):
         return self.type_name
 
     def get_rule_types(self) -> list:
@@ -38,6 +50,8 @@ class DeviceType(models.Model):
 
 
 class Device(models.Model):
+    item_kind = "device"
+
     device_name = models.CharField("name", max_length=200)
     device_user = models.ForeignKey(
         User, verbose_name="user", on_delete=models.CASCADE)
@@ -49,6 +63,10 @@ class Device(models.Model):
     is_monitor_state = models.BooleanField("monitor state", default=False)
 
     def __str__(self):
+        return self.device_name
+
+    @property
+    def name(self):
         return self.device_name
 
     def set_state(self, value: bool):

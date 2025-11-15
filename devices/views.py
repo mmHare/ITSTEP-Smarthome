@@ -99,6 +99,14 @@ def new_device_view(request):
             device.device_user = request.user
             device.save()
 
+            # save to action history
+            record_item = {"item_id": device.id,
+                           "item_name": device.name,
+                           "item_kind": device.item_kind}
+            action = 'add'
+            StatsService.save_user_action(
+                request.user, action, record_item)
+
             return redirect('devices:home')
         print('not valid')
     else:
@@ -122,6 +130,14 @@ def delete_device_view(request, pk):
         Device, pk=pk, device_user=request.user)  # ensures ownership
 
     if request.method == 'POST':
+        # save to action history
+        record_item = {"item_id": device.id,
+                       "item_name": device.name,
+                       "item_kind": device.item_kind}
+        action = 'delete'
+        StatsService.save_user_action(
+            request.user, action, record_item)
+
         device.delete()
         return redirect('devices:home')
 
@@ -135,7 +151,15 @@ def room_list_view(request):
                 if DeviceRoom.objects.filter(room_name=name).exists():
                     error_text = 'This room is already in the list'
                 else:
-                    DeviceRoom.objects.create(room_name=name)
+                    room = DeviceRoom.objects.create(room_name=name)
+
+                    # save to action history
+                    record_item = {"item_id": room.id,
+                                   "item_name": room.name,
+                                   "item_kind": room.item_kind}
+                    action = 'add'
+                    StatsService.save_user_action(
+                        request.user, action, record_item)
 
         except DeviceRoom.DoesNotExist:
             error_text = 'Room does not exist'
@@ -152,6 +176,13 @@ def delete_room_view(request, pk):
     room = get_object_or_404(DeviceRoom, pk=pk)
 
     if request.method == 'POST':
+        # save to action history
+        record_item = {"item_id": room.id,
+                       "item_name": room.name,
+                       "item_kind": room.item_kind}
+        action = 'delete'
+        StatsService.save_user_action(request.user, action, record_item)
+
         room.delete()
         return redirect('devices:room_list')
 
@@ -174,6 +205,14 @@ def toggle_logic_active(request, pk):
 
     rule.active = is_active
     rule.save()
+
+    # save to action history
+    record_item = {"item_id": rule.id,
+                   "item_name": rule.name,
+                   "item_kind": rule.item_kind}
+    action = 'turn_on' if is_active else 'turn_off'
+    StatsService.save_user_action(request.user, action, record_item)
+
     return JsonResponse({'success': True, 'active': rule.active})
 
 
