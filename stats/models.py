@@ -19,6 +19,10 @@ class StatsUserAction(models.Model):
     def __str__(self):
         return f'{self.user.username} - {self.action}'
 
+    @property
+    def time_as_str(self) -> str:
+        return self.timestamp.strftime("%Y/%m/%d %H:%M:%S")
+
 
 class StatsDeviceState(models.Model):
     # we don't do foreign key, so we don't loose record after device is deleted
@@ -32,3 +36,7 @@ class StatsDeviceState(models.Model):
     value = models.FloatField("value", null=True, blank=True)
     description = models.CharField(
         "description", max_length=200, null=True, blank=True)
+
+    @property
+    def time_as_str(self) -> str:
+        return self.timestamp.strftime("%Y/%m/%d %H:%M:%S")
