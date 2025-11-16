@@ -6,12 +6,6 @@ from logic_module.logic.logic_map import LOGIC_MAP
 
 
 class LogicController(models.Model):
-    # used for DeviceDetailView; deprecated
-    # LOGIC_CHOICES = [
-    #     ('thermal', 'Thermal Logic'),
-    #     ('time', 'Time Logic'),
-    # ]
-
     item_kind = "logic rule"
 
     name = models.CharField("name", max_length=200, default="Rule")
@@ -40,20 +34,24 @@ class LogicController(models.Model):
         """Checks if conditions for rules are met"""
         # if controller is off, conditions are not checked
         if not self.active:
-            return
+            return None
         try:
-            result = self.device.state
             if self.device.device_type.get_show_numeric_fields() and not self.numeric_value:
                 raise Exception("Controller has no current value")
 
-            result = True
+            result_tab = []
             for logic in self.device.device_type.get_rule_types():
                 LogicClass = LOGIC_MAP.get(logic)
                 if not LogicClass:
                     continue
                 logic_instance = LogicClass(self)
-                result = logic_instance.check() and result
+                result_tab.append(logic_instance.check())
 
-            return result
+            if len(result_tab) == 0:  # in case no logic states in result
+                return None
+            else:
+                return all(result_tab)
+
         except Exception as e:
             print("Error while updating device state:", e)
+            return None

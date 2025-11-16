@@ -226,3 +226,18 @@ def rule_action(request, pk):
     StatsService.save_user_action(request.user, action, record_item)
 
     return JsonResponse({'success': True, 'action': action, 'details_url': reverse('devices:details', args=[parent_device.id])})
+
+
+def toggle_power(request, pk):
+    device = get_object_or_404(Device, pk=pk)
+    if request.method == 'POST':
+        if device.power_on:  # if device is turned on, we power it off
+            device.turn_off()
+            device.save()
+            StatsService.save_user_action(request.user, "power_off", device)
+        else:
+            device.turn_on()
+            device.save()
+            StatsService.save_user_action(request.user, "power_on", device)
+
+        return redirect('devices:home')

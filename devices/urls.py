@@ -8,6 +8,7 @@ urlpatterns = [
     path('<int:pk>/', DeviceDetailView.as_view(), name='details'),
     path('<int:pk>/edit/', DeviceUpdateView.as_view(), name='edit_device'),
     path('<int:pk>/delete/', delete_device_view, name='delete_device'),
+    path('<int:pk>/power/', toggle_power, name='toggle_power'),
     path('rooms/', room_list_view, name='room_list'),
     path('rooms/<int:pk>/delete/', delete_room_view, name='delete_room'),
     path('logic/<int:pk>/toggle-active/',

@@ -35,7 +35,7 @@ def start_device_check_thread():
 
         while True:
             try:
-                for dvc in Device.objects.all():
+                for dvc in Device.objects.filter(power_on=True):
                     dvc.monitor_device()  # save state history record
                     # check all active conditions for device
                     states = [ctrl.get_state() for ctrl in LogicController.objects.filter(
