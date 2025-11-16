@@ -43,15 +43,16 @@ class LogicController(models.Model):
             return
         try:
             result = self.device.state
-            if not self.numeric_value:
+            if self.device.device_type.get_show_numeric_fields() and not self.numeric_value:
                 raise Exception("Controller has no current value")
 
+            result = True
             for logic in self.device.device_type.get_rule_types():
                 LogicClass = LOGIC_MAP.get(logic)
                 if not LogicClass:
                     continue
                 logic_instance = LogicClass(self)
-                result = result and logic_instance.check()
+                result = logic_instance.check() and result
 
             return result
         except Exception as e:

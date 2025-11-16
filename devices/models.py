@@ -70,6 +70,10 @@ class Device(models.Model):
         return self.device_name
 
     def set_state(self, value: bool):
+        if self.state == value:
+            return
+        descr = "Turn " + ("on" if value else "off")
+        StatsService.save_device_state(self, description=descr)
         self.state = value
 
     def get_state(self):

@@ -69,6 +69,8 @@
 
 <button onclick="window.location='{% url 'devices:home' %}'">Back</button>
 </div>
+
+<button onclick="window.location='{% url 'stats:export' 'device' device.id %}'">Download device log</button>
 {% endblock %}
 
 
