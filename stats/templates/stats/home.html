@@ -1,0 +1,103 @@
+{% extends "smarthome/base_user.html" %}
+
+{% block title %}History - SmartHome{% endblock %}
+
+{% block content %}
+{% load static %}
+<script type="text/javascript" src="{% static 'js/log_filter.js' %}" defer></script>
+
+{% if user.is_staff %}
+    <div class="header"><h2>All users logs</h2></div>
+{% else %}
+    <div class="header"><h2>{{ user_name }}'s logs</h2></div>
+{% endif %}
+
+<div class="content">
+{% if page_log %}
+    <div class="center">
+    {% if user.is_staff %}
+        <button class="admin" onclick="window.location='{% url 'stats:export' 'all-users' %}'">Download all users logs<br>(Admin)</button>
+    {% else %}
+        <button onclick="window.location='{% url 'stats:export' 'user' %}'">Download {{ user_name }}'s logs</button>
+    {% endif %}
+    </div>
+
+<input type="text" id="FilterLogInput" onkeyup="LogFilter()" placeholder="Search for action.." title="Type in an action">
+
+<div class="center">
+    <span class="step-links">
+        {% if page_log.has_previous %}
+            <a href="?page=1">&laquo;1</a>
+            <a href="?page={{ page_log.previous_page_number }}"><</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_log.number }} of {{ page_log.paginator.num_pages }}.
+        </span>
+
+        {% if page_log.has_next %}
+            <a href="?page={{ page_log.next_page_number }}">></a>
+            <a href="?page={{ page_log.paginator.num_pages }}">{{ page_log.paginator.num_pages }}&raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+<table id="tableLog" class="tableStats">
+    <tr>
+        {% if user.is_staff %}
+        <th>User
+            <button onclick="window.location='{% url 'stats:sort' 'user' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="m288-384 192-192 192 192H288Z"/></svg>
+            </button>
+            <button onclick="window.location='{% url 'stats:sort' '-user' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M480-384 288-576h384L480-384Z"/></svg>
+            </button></th>
+        {% endif %}
+        <th>Time 
+            <button onclick="window.location='{% url 'stats:sort' 'timestamp' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="m288-384 192-192 192 192H288Z"/></svg>
+            </button>
+            <button onclick="window.location='{% url 'stats:sort' '-timestamp' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M480-384 288-576h384L480-384Z"/></svg>
+            </button></th>
+        <th>Action 
+            <button onclick="window.location='{% url 'stats:sort' 'user_action' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="m288-384 192-192 192 192H288Z"/></svg>
+            </button>
+            <button onclick="window.location='{% url 'stats:sort' '-user_action' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M480-384 288-576h384L480-384Z"/></svg>
+            </button></th>
+        <th>Item kind
+            <button onclick="window.location='{% url 'stats:sort' 'item_kind' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="m288-384 192-192 192 192H288Z"/></svg>
+            </button>
+            <button onclick="window.location='{% url 'stats:sort' '-item_kind' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M480-384 288-576h384L480-384Z"/></svg>
+            </button></th>
+        <th>Item name
+            <button onclick="window.location='{% url 'stats:sort' 'item_name' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="m288-384 192-192 192 192H288Z"/></svg>
+            </button>
+            <button onclick="window.location='{% url 'stats:sort' '-item_name' %}'">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="#FFFFFF"><path d="M480-384 288-576h384L480-384Z"/></svg>
+            </button></th>
+    </tr>
+    {% for log in page_log %}
+    <tr>
+        {% if user.is_staff %}
+        <td>{{ log.user }}</td>
+        {% endif %}
+        <td>{{ log.timestamp }}</td>
+        <td>{{ log.user_action }}</td>
+        <td>{{ log.item_kind }}</td>
+        <td>{{ log.item_name }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No logs registered.</p>
+
+</div>
+{% endif %}
+
+{% endblock %}

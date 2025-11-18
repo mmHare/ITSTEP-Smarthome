@@ -22,15 +22,6 @@ def home_view(request):
     return render(request, 'smarthome/home.html', {'user_name': user_name})
 
 
-def action_history_view(request):
-    user_name = request.user.username
-
-    if not user_name:
-        return redirect('smarthome:login')
-    return render(request, 'smarthome/action_history.html', {'user_name': user_name})
-
-
-
 def homepage_view(request):
     return render(request, 'smarthome/homepage.html')
 

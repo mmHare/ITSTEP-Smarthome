@@ -1,0 +1,24 @@
+{% extends "smarthome/base_user.html" %}
+
+{% block title %} 
+{% if form.instance.pk %}Edit Rule{% else %}New Rule{% endif %} - Smarthome
+{% endblock %}
+
+{% block content %}
+<div class="header"><h2>{% if form.instance.pk %}Edit Rule{% else %}New Rule{% endif %} for {{ device.device_name }}</h2></div>
+
+<div class="content">
+<form class="form-with-validation" method="post">
+    {% csrf_token %}
+    <div id="logic-form-fields">
+        {{ form }}
+
+    </div>
+
+    <button type="submit">+ Add Rule</button>
+</form>
+</div>
+
+<button onclick="window.location='{% url 'devices:home' %}'">Back</button>
+
+{% endblock %}

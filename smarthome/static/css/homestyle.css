@@ -1,7 +1,7 @@
 :root {
   --base-color: rgb(135, 190, 216);
   --text-color: rgb(12, 18, 49);
-  --link-color: rgb(119, 48, 233);
+  --link-color: rgb(97, 48, 233);
 }
 
 .darkmode {
@@ -60,6 +60,13 @@ body {
   justify-self: center;
 }
 
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
 .footer > footer {
   grid-area: footer;
   margin-left: 10px;
@@ -100,10 +107,13 @@ button:hover {
   position: fixed;
   top: 120px;
   right: 10px;
+  width: 5rem;
+  border: 1px solid var(--text-color);
 }
 
 .admin {
   background-color: rgb(139, 18, 196);
+  max-width: 15rem;
 }
 
 .admin:hover {
@@ -137,15 +147,17 @@ li.devices {
 
 /* TABELE */
 .tableDevices {
-  border: 3px solid var(--text-color);
+  border-width: 3px;
+  border-style: hidden;
+  border-color: var(--text-color);
   border-collapse: collapse;
-  border-radius: 5px;
-  background-color: oklch(from var(--base-color) calc(l - 0.1) 0.2 180);
+  border-radius: 25px;
+  background-color: oklch(from var(--base-color) calc(l - 0.1) c h);
   width: auto;
 }
 
 .tableDevices th, td {
-  padding: 10px;
+  padding: 20px;
   border-bottom: 1px solid;
 }
 
@@ -157,7 +169,19 @@ li.devices {
 }
 
 .tableRules th, td {
-  padding: 10px;
+  padding: 20px;
+  border-bottom: 1px solid;
+}
+
+.tableStats {
+  border: 1px solid;
+  border-collapse: collapse;
+  width: auto;
+  text-align: center;
+}
+
+.tableStats th, td {
+  padding: 20px;
   border-bottom: 1px solid;
 }
 
@@ -199,12 +223,12 @@ li.devices {
 
 /* Styl dla formularza login i rejestracji Django */
 .form-with-validation {
-    font-size: 0.9rem;
+    font-size: 1.3rem;
     padding: 1rem;
     display: flex;
     flex-flow: column;
     text-align: justify;
-    gap: 1rem;
+    gap: 1.5rem;
 }
 
 .form-with-validation ul {
@@ -217,17 +241,17 @@ li.devices {
 
 .form-with-validation input{
     padding: 0.4rem;
-    max-width: 12rem;
+    max-width: 10rem;
     border-radius: 0.5rem;
     border: none;
-    font-size: 0.9rem;
+    font-size: 1.2rem;
     color: var(--base-color);
-    background-color: var(--text-color);
+    background-color: oklch(from var(--text-color) calc(l + 0.2) c h);
 }
 
 .form-with-validation input:autofill {
     padding: 0.4rem;
-    max-width: 12rem;
+    max-width: 10rem;
     border-radius: 0.5rem;
     border: none;
     font-size: 0.9rem;
@@ -236,11 +260,11 @@ li.devices {
 }
 
 .form-with-validation select {
-  background-color: var(--text-color);
+  background-color: oklch(from var(--text-color) calc(l + 0.2) c h);
   color: var(--base-color);
   padding: 0.4rem;
   border-radius: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 }
 
 .form-with-validation div button {

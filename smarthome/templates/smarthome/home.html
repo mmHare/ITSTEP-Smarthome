@@ -6,7 +6,5 @@
 
 <div class="header"><h1>Welcome, {{ user_name }}!</h1></div>
 
-<button onclick="window.location='{% url 'stats:export' 'user' %}'">Download current user log</button>
-<button onclick="window.location='{% url 'stats:export' 'all-users' %}'">Download all users log</button>
 
 {% endblock %}

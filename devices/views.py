@@ -102,6 +102,33 @@ def new_device_view(request):
     return render(request, 'devices/device_form.html', {'form': form})
 
 
+def new_rule_view(request, pk):
+    device = get_object_or_404(
+        Device, pk=pk
+    )
+
+    if request.method == 'POST':
+        # Fields are shown depending on what is enabled in current device's device type
+        show_numeric = device.device_type.get_show_numeric_fields()
+        show_time = device.device_type.get_show_time_fields()
+
+        form = LogicControllerForm(request.POST, show_numeric=show_numeric, show_time=show_time)
+        if form.is_valid():
+            rule = form.save(commit=False)  # don't save yet
+            rule.rule_user = request.user  # set user before saving
+            rule.save()
+
+            # save to action history
+            action = 'add'
+            StatsService.save_user_action(request.user, action, rule)
+
+            return redirect('devices:details')
+        print('not valid')
+    else:
+        form = LogicControllerForm()
+    return render(request, 'devices/rule_form.html', {'form': form})
+
+
 class DeviceUpdateView(UpdateView):
     model = Device
     form_class = DeviceForm
@@ -125,6 +152,17 @@ def delete_device_view(request, pk):
         device.delete()
         return redirect('devices:home')
 
+
+class RuleUpdateView(UpdateView):
+    model = LogicController
+    form_class = LogicControllerForm
+    template_name = 'devices/rule_edit.html'
+    success_url = reverse_lazy('devices:details')
+
+    def get_queryset(self):
+        # Restrict editing to the logged-in user's devices
+    
+        return LogicController.objects.filter(device_id=self.request.user)
 
 def room_list_view(request):
     error_text = ''

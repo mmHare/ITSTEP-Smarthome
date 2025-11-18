@@ -17,14 +17,20 @@
 {% if logic_controllers %}
 <table class="tableRules">
     <tr>
-        <th>Active/Inactive</th>
+        <th>Enable</th>
         <th>Name</th>
-        <th>Numeric min</th>
-        <th>Numeric max</th>
-        <th>Time min</th>
-        <th>Time max</th>
+        {% if device.device_type.enable_thermal %}
+        <th>Start<br>temperature</th>
+        <th>End<br>temperature</th>
+        {% endif %}
+        {% if device.device_type.enable_time %}
+        <th>Start<br>time</th>
+        <th>End<br>time</th>
+        {% endif %}
+        {% if device.device_type.enable_thermal %}
         <th>Value</th>
-        <th>Set new value</th>
+        <th>New value</th>
+        {% endif %}
     </tr>
     {% for rule in logic_controllers %}
         <tr id="rule_{{ rule.id }}">
@@ -32,16 +38,25 @@
                 <input type="checkbox" id="rule_{{ rule.id }}" {% if rule.active %}checked{% endif %}
                     onchange="toggleRuleActive({{ rule.id }}, this.checked)"></td>
             <td>{{ rule.name }}</td>
-            <td>{{ rule.numeric_min }}</td>
-            <td>{{ rule.numeric_max }}</td>
-            <td>{{ rule.time_min }}</td>
-            <td>{{ rule.time_max }}</td>
+            {% if device.device_type.enable_thermal %}
+                <td>{{ rule.numeric_min }}</td>
+                <td>{{ rule.numeric_max }}</td>
+            {% endif %}
+            {% if device.device_type.enable_time %}
+                <td>{{ rule.time_min }}</td>
+                <td>{{ rule.time_max }}</td>
+            {% endif %}
+            {% if device.device_type.enable_thermal %}
             <td>{{ rule.numeric_value }}</td>
-            <td><label for="rule_new_value">New value:</label>
+            <td><label for="rule_new_value"></label>
                 <input type="number" name="rule_new_value" id="rule_{{ rule.id }}_value" value={{ rule.numeric_value }}>
             </td>
             <td><button type="button" onclick="sendRuleAction({{ rule.id }}, 'set_value', 
-                    {input_value_num: document.getElementById('rule_{{ rule.id }}_value').value})">Set new value</button></td>
+                    {input_value_num: document.getElementById('rule_{{ rule.id }}_value').value})">Apply new value</button></td>
+            {% endif %}
+            {% comment %} <td><form method="get" action="{% url 'devices:edit_rule' rule.id %}">
+                    <button type="submit">Edit</button>
+                </form></td> {% endcomment %}
             <td><button class="buttonDelete" type="button" onclick="sendRuleAction({{ rule.id }}, 'delete')">Delete</button></td>
             </tr>
     {% endfor %}
@@ -49,6 +64,8 @@
 {% else %}
 <p>No rules set yet</p>
 {% endif %}
+
+<button onclick="window.location='{% url 'devices:new_rule' device.id %}'">+ Add new rule</button>
 
 <h3>Add a new rule:</h3>   
 <form method="POST" action="{% url 'devices:details' device.id %}">
