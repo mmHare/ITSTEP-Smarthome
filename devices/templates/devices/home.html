@@ -38,5 +38,7 @@
 
 <button onclick="window.location='{% url 'devices:new_device' %}'">+ Add device</button>
 </div>
+
+<button onclick="window.location='{% url 'stats:export' 'all-devices' %}'">Download devices log</button>
 {% endblock %}
 

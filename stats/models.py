@@ -23,10 +23,14 @@ class StatsUserAction(models.Model):
     def user_name(self):
         return self.user.username
 
+    @property
+    def time_as_str(self) -> str:
+        return self.timestamp.strftime("%Y/%m/%d %H:%M:%S")
+
 
 class StatsDeviceState(models.Model):
     # we don't do foreign key, so we don't loose record after device is deleted
-    device_id = models.IntegerField("item_id")
+    device_id = models.IntegerField("device_id")
     device_name = models.CharField("device_name", max_length=200)
     device_kind = models.CharField("device_kind", max_length=200)
     timestamp = models.DateTimeField("timestamp", default=timezone.now)
@@ -34,3 +38,9 @@ class StatsDeviceState(models.Model):
     device_on = models.BooleanField("device_on")
     metric = models.CharField("metric", max_length=200, null=True, blank=True)
     value = models.FloatField("value", null=True, blank=True)
+    description = models.CharField(
+        "description", max_length=200, null=True, blank=True)
+
+    @property
+    def time_as_str(self) -> str:
+        return self.timestamp.strftime("%Y/%m/%d %H:%M:%S")

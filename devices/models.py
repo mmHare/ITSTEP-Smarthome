@@ -61,6 +61,7 @@ class Device(models.Model):
         DeviceRoom, verbose_name="room", default=None, on_delete=models.SET_NULL, null=True, blank=True)
     state = models.BooleanField("on", default=False)
     is_monitor_state = models.BooleanField("monitor state", default=False)
+    power_on = models.BooleanField("power_on", default=False)
 
     def __str__(self):
         return self.device_name
@@ -70,16 +71,31 @@ class Device(models.Model):
         return self.device_name
 
     def set_state(self, value: bool):
+        if not self.power_on:  # device is off power, cannot be turned on
+            value = False
+        if self.state == value:
+            return
+        descr = "Turn " + ("on" if value else "off")
+        StatsService.save_device_state(self, description=descr)
         self.state = value
 
     def get_state(self):
         return self.state
 
     def turn_on(self):
+        # power on
+        if not self.power_on:
+            self.power_on = True
+            StatsService.save_device_state(self, description="Power on")
         self.set_state(True)
 
     def turn_off(self):
+        # power off
+        if not self.power_on:
+            return
         self.set_state(False)
+        self.power_on = False
+        StatsService.save_device_state(self, description="Power off")
 
     @property
     def item_kind(self) -> str:

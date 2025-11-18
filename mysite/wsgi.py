@@ -35,7 +35,7 @@ def start_device_check_thread():
 
         while True:
             try:
-                for dvc in Device.objects.all():
+                for dvc in Device.objects.filter(power_on=True):
                     dvc.monitor_device()  # save state history record
                     # check all active conditions for device
                     states = [ctrl.get_state() for ctrl in LogicController.objects.filter(
@@ -47,7 +47,8 @@ def start_device_check_thread():
                         # device state will be True if any condition is met
                         new_state = any(valid_states)
                         if new_state != dvc.state:
-                            dvc.state = new_state
+                            # dvc.state = new_state
+                            dvc.set_state(new_state)
                             dvc.save()
             except OperationalError as e:
                 print(f"Database not ready: {e}")

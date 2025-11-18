@@ -8,4 +8,6 @@ urlpatterns = [
     path('', stats_home_view, name='home'),
     path('sort/<str:mode>/', stats_sort_view, name='sort'),
     path('export/<str:mode>/', export_view, name='export'),
+    path('export/<str:mode>/', export_view, name='export'),
+    path('export/<str:mode>/<int:pk>/', export_view, name='export')
 ]

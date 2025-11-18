@@ -41,7 +41,7 @@ class StatsService:
             print("Error while adding user action record:", e)
 
     @classmethod
-    def save_device_state(cls, device, metric: str = None, value: float = None):
+    def save_device_state(cls, device, metric: str = None, value: float = None, description: str = None):
         """Saves history record of device state, metric and value
 
         Args:
@@ -61,37 +61,11 @@ class StatsService:
                 timestamp=timezone.now(),
                 device_on=device.state,
                 metric=metric,  # to be implemented from sensor
-                value=value  # to be implemented from sensor
+                value=value,  # to be implemented from sensor
+                description=description
             )
 
             new_record.save()
 
         except Exception as e:
             print("Error while adding device state record:", e)
-
-    @classmethod
-    def export_user_action_history(cls, user, format: str = 'json', time_from: datetime = None, time_to: datetime = None):
-        """Export historic user action data into json or csv
-
-        Args:
-            user (User): selected user (None for all users)
-            format (str, optional): json or csv. Defaults to 'json'.
-            time_from (datetime, optional): Start time (None for all previous data). Defaults to None.
-            time_to (datetime, optional): End time (None for current time). Defaults to None.
-        """
-        if not user:
-            pass  # export for all users
-
-    @classmethod
-    def export_device_history(cls, device, format: str = 'json', time_from: datetime = None, time_to: datetime = None):
-        """Export historic device data into json or csv
-
-        Args:
-            device (Device): selected device (None for all devices)
-            format (str, optional): json or csv. Defaults to 'json'.
-            time_from (datetime, optional): Start time (None for all previous data). Defaults to None.
-            time_to (datetime, optional): End time (None for current time). Defaults to None.
-        """
-
-        if not device:
-            pass
