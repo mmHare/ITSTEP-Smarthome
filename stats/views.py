@@ -5,6 +5,7 @@ from django.shortcuts import redirect, render
 from django.core.paginator import Paginator
 
 from stats.models import StatsDeviceState, StatsUserAction
+from stats.stats_service import StatsService
 
 
 def stats_home_view(request):
@@ -12,21 +13,21 @@ def stats_home_view(request):
 
     if not user.username:
         return redirect('smarthome:login')
-    
+
     if user.is_staff:
         user_logs = StatsUserAction.objects.filter().order_by("-timestamp").values("timestamp", "user", "user_action",
-                                                                "item_kind", "item_id", "item_name")
+                                                                                   "item_kind", "item_id", "item_name")
     else:
         user_logs = StatsUserAction.objects.filter(user=user).order_by("-timestamp").values("timestamp", "user", "user_action",
-                                                                "item_kind", "item_id", "item_name")
-    
+                                                                                            "item_kind", "item_id", "item_name")
+
     # pagination
     paginator = Paginator(user_logs, 8)
     page_number = request.GET.get("page")
     page_log = paginator.get_page(page_number)
 
     return render(request, 'stats/home.html', {
-        'user_name': user.username, 
+        'user_name': user.username,
         'page_log': page_log})
 
 
@@ -35,24 +36,22 @@ def stats_sort_view(request, mode):
 
     if not user.username:
         return redirect('smarthome:login')
-    
+
     if user.is_staff:
         user_logs = StatsUserAction.objects.filter().order_by(mode).values("timestamp", "user", "user_action",
-                                                                "item_kind", "item_id", "item_name")
+                                                                           "item_kind", "item_id", "item_name")
     else:
         user_logs = StatsUserAction.objects.filter(user=user).order_by(mode).values("timestamp", "user", "user_action",
-                                                                "item_kind", "item_id", "item_name")
-    
+                                                                                    "item_kind", "item_id", "item_name")
+
     # pagination
     paginator = Paginator(user_logs, 8)
     page_number = request.GET.get("page")
-    page_log = paginator.get_page(page_number)  
+    page_log = paginator.get_page(page_number)
 
     return render(request, 'stats/home.html', {
-        'user_name': user.username, 
+        'user_name': user.username,
         'page_log': page_log})
-
-
 
 
 def export_view(request, mode, pk=None):
@@ -113,3 +112,27 @@ def export_view(request, mode, pk=None):
         return HttpResponse(f"Error preparing export: {e}", status=500)
 
     return response
+
+
+def clear_log_view(request, mode, pk=None):
+    try:
+        if mode == "user":  # get data for current user
+            StatsService.clear_user_logs(request.user)
+            return HttpResponse("Clear user history success.", status=200)
+
+        elif mode == "all-users":  # get data for all users
+            StatsService.clear_user_logs()
+            return HttpResponse("Clear users history success.", status=200)
+
+        elif mode == "device":  # get data for given device
+            if pk <= 0:
+                raise ValueError("Invalid device id")
+            else:
+                StatsService.clear_device_logs(pk)
+                return HttpResponse("Clear device history success.", status=200)
+
+        elif mode == "all-devices":
+            StatsService.clear_device_logs(pk)
+            return HttpResponse("Clear device history success.", status=200)
+    except Exception as e:
+        return HttpResponseBadRequest(f"Clear history error: {e}")

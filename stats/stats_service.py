@@ -41,6 +41,22 @@ class StatsService:
             print("Error while adding user action record:", e)
 
     @classmethod
+    def clear_user_logs(cls, user=None):
+        """Clears user action logs.
+
+        Args:
+            user (User, optional): User for which logs will be cleared. Defaults to None - all users.
+        """
+        try:
+            if user:  # logs for given user
+                StatsUserAction.objects.filter(user=user).delete()
+            else:  # all action logs
+                StatsUserAction.objects.all().delete()
+
+        except Exception as e:
+            print("Error while clearing user logs:", e)
+
+    @classmethod
     def save_device_state(cls, device, metric: str = None, value: float = None, description: str = None):
         """Saves history record of device state, metric and value
 
@@ -69,3 +85,19 @@ class StatsService:
 
         except Exception as e:
             print("Error while adding device state record:", e)
+
+    @classmethod
+    def clear_device_logs(cls, device_id: int = 0):
+        """Clears user action logs.
+
+        Args:
+            device_id (int, optional): Id of device for which logs will be cleared. Defaults to 0 - all devices.
+        """
+        try:
+            if device_id > 0:  # logs for given device
+                StatsDeviceState.objects.filter(device_id=device_id).delete()
+            else:  # all state logs
+                StatsDeviceState.objects.all().delete()
+
+        except Exception as e:
+            print("Error while clearing device logs:", e)
