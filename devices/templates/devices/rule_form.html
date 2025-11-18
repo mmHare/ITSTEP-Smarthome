@@ -11,14 +11,13 @@
 <form class="form-with-validation" method="post">
     {% csrf_token %}
     <div id="logic-form-fields">
-        {{ form }}
-
+        {{ logic_form }}
     </div>
 
-    <button type="submit">+ Add Rule</button>
+    <button type="submit">{% if form.instance.pk %}Save changes{% else %}+ Add Rule{% endif %}</button>
 </form>
 </div>
 
-<button onclick="window.location='{% url 'devices:home' %}'">Back</button>
+<button onclick="window.location='{% url 'devices:details' device.id %}'">Back</button>
 
 {% endblock %}

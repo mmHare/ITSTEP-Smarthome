@@ -54,9 +54,9 @@
             <td><button type="button" onclick="sendRuleAction({{ rule.id }}, 'set_value', 
                     {input_value_num: document.getElementById('rule_{{ rule.id }}_value').value})">Apply new value</button></td>
             {% endif %}
-            {% comment %} <td><form method="get" action="{% url 'devices:edit_rule' rule.id %}">
+            <td><form method="get" action="{% url 'devices:edit_rule' rule.id %}">
                     <button type="submit">Edit</button>
-                </form></td> {% endcomment %}
+                </form></td>
             <td><button class="buttonDelete" type="button" onclick="sendRuleAction({{ rule.id }}, 'delete')">Delete</button></td>
             </tr>
     {% endfor %}

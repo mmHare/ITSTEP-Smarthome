@@ -156,13 +156,55 @@ def delete_device_view(request, pk):
 class RuleUpdateView(UpdateView):
     model = LogicController
     form_class = LogicControllerForm
-    template_name = 'devices/rule_edit.html'
+    template_name = 'devices/rule_form.html'
     success_url = reverse_lazy('devices:details')
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        rule = self.get_object()
+        device = rule.device
+
+        # Fields are shown depending on what is enabled in current device's device type
+        show_numeric = device.device_type.get_show_numeric_fields()
+        show_time = device.device_type.get_show_time_fields()
+
+        context["logic_form"] = LogicControllerForm(
+            show_numeric=show_numeric, show_time=show_time)
+        context["device"] = LogicController.objects.filter(
+            device=device)
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        # Fields are shown depending on what is enabled in current device's device type
+        show_numeric = self.object.device.device_type.get_show_numeric_fields()
+        show_time = self.object.device.device_type.get_show_time_fields()
+
+        form = LogicControllerForm(
+            request.POST or None,
+            show_numeric=show_numeric,
+            show_time=show_time
+        )
+
+        if form.is_valid():
+            logic = form.save(commit=False)
+            logic.device = self.object
+            logic.save()
+
+            # success, so save history record
+            action = 'add'
+            StatsService.save_user_action(request.user, action, logic)
+
+            return redirect("devices:details", pk=self.object.device.pk)
+
+        context = self.get_context_data(object=self.object)
+        context["logic_form"] = form
+        return self.render_to_response(context)
 
     def get_queryset(self):
         # Restrict editing to the logged-in user's devices
-    
-        return LogicController.objects.filter(device_id=self.request.user)
+        return LogicController.objects.filter()
 
 def room_list_view(request):
     error_text = ''
