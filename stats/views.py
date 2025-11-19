@@ -37,6 +37,11 @@ def stats_sort_view(request, mode):
     if not user.username:
         return redirect('smarthome:login')
 
+    if mode == "action":
+        mode = "user_action"
+    elif mode == "-action":
+        mode = "-user_action"
+
     if user.is_staff:
         user_logs = StatsUserAction.objects.filter().order_by(mode).values("timestamp", "user", "user_action",
                                                                            "item_kind", "item_id", "item_name")

@@ -130,6 +130,10 @@ button:hover {
   transition: background-color 0.2s ease;
 }
 
+.tableStats .buttonDelete  {
+  background-color: oklch(from var(--text-color) l 0.3 90);
+}
+
 
 li.rooms {
   margin-top: 0.6rem;
