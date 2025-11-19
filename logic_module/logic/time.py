@@ -33,8 +33,11 @@ class TimeLogicModule(LogicModule):
         try:
             if (not self.low_limit) or (not self.high_limit):
                 raise ValueError("Limit is not set")
-            current_time = datetime.now().time()
+            elif (self.low_limit == self.high_limit):
+                # limits have the same time -> check is off
+                return True
 
+            current_time = datetime.now().time()
             return self.time_in_range(self.low_limit, self.high_limit, current_time)
         except Exception as e:
             print("Error while checking condition:", e)

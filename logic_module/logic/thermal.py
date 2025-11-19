@@ -32,8 +32,8 @@ class ThermalLogicModule(LogicModule):
 
     def check_condition(self) -> bool:
         try:
-            if (not self.low_limit) and (not self.high_limit):  # if both are 0
-                raise ValueError("Limit is not set")
+            if (not self.low_limit) and (not self.high_limit):  # if both are 0 - always satisfied
+                return True
             if not self.current_value:
                 raise ValueError("No current value")
             return self.low_limit < self.current_value < self.high_limit

@@ -16,8 +16,8 @@ class LogicController(models.Model):
     numeric_value = models.FloatField(blank=True, null=True)
     numeric_max = models.FloatField(default=0)
     numeric_min = models.FloatField(default=0)
-    time_min = models.TimeField(default=datetime.time(8, 00))
-    time_max = models.TimeField(default=datetime.time(22, 00))
+    time_min = models.TimeField(default=datetime.time(00, 00))
+    time_max = models.TimeField(default=datetime.time(00, 00))
 
     def __str__(self):
         return self.name
