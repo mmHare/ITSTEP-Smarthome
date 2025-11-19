@@ -54,7 +54,7 @@ def start_device_check_thread():
                 print(f"Database not ready: {e}")
             except Exception as e:
                 print(f"Error in device check thread: {e}")
-            time.sleep(30)
+            time.sleep(5)
 
     thread = threading.Thread(target=check_devices, daemon=True)
     thread.start()

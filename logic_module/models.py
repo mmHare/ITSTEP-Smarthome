@@ -8,12 +8,12 @@ from logic_module.logic.logic_map import LOGIC_MAP
 class LogicController(models.Model):
     item_kind = "logic rule"
 
-    name = models.CharField("name", max_length=200, default="Rule")
+    name = models.CharField("name", max_length=200, default="")
     mac_address = models.CharField(max_length=11)
     active = models.BooleanField(default=True)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
 
-    numeric_value = models.FloatField(blank=True, null=True)
+    numeric_value = models.FloatField(default=0)
     numeric_max = models.FloatField(default=0)
     numeric_min = models.FloatField(default=0)
     time_min = models.TimeField(default=datetime.time(00, 00))
@@ -36,7 +36,7 @@ class LogicController(models.Model):
         if not self.active:
             return None
         try:
-            if self.device.device_type.get_show_numeric_fields() and not self.numeric_value:
+            if self.device.device_type.get_show_numeric_fields() and self.numeric_value is None:
                 raise Exception("Controller has no current value")
 
             result_tab = []

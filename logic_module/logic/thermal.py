@@ -17,7 +17,7 @@ class ThermalLogicModule(LogicModule):
         self.low_limit = self.controller.numeric_min
         self.current_value = self.controller.numeric_value
 
-        if self.current_value == None:
+        if self.current_value is None:
             self.current_value = self._initial_temperature  # temperature in Celsius
 
     def update_current_value(self):
@@ -34,7 +34,7 @@ class ThermalLogicModule(LogicModule):
         try:
             if (not self.low_limit) and (not self.high_limit):  # if both are 0 - always satisfied
                 return True
-            if not self.current_value:
+            if self.current_value is None:
                 raise ValueError("No current value")
             return self.low_limit < self.current_value < self.high_limit
         except Exception as e:

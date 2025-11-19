@@ -62,6 +62,7 @@ class Device(models.Model):
     state = models.BooleanField("on", default=False)
     is_monitor_state = models.BooleanField("monitor state", default=False)
     power_on = models.BooleanField("power_on", default=False)
+    updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.device_name

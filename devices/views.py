@@ -17,6 +17,7 @@ from .models import Device, DeviceRoom
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
+from django.db.models import Max
 
 
 def devices_home_view(request):
@@ -26,7 +27,7 @@ def devices_home_view(request):
         return redirect('smarthome:login')
 
     if user.is_staff:
-        user_devices = Device.objects.filter()        
+        user_devices = Device.objects.filter()
     else:
         user_devices = Device.objects.filter(device_user=request.user)
 
@@ -329,5 +330,17 @@ def toggle_power(request, pk):
 
 
 def check_status(request):
-    if_refresh = some_logic()
-    return JsonResponse({"refresh_required": if_refresh})
+    last_update = Device.objects.aggregate(Max("updated"))["updated__max"]
+    latest_seen = request.session.get("last_seen_update")
+
+    # First time → store and return no refresh
+    if latest_seen is None:
+        request.session["last_seen_update"] = str(last_update)
+        return JsonResponse({"refresh_required": False})
+
+    refresh_needed = str(last_update) > latest_seen
+
+    if refresh_needed:
+        request.session["last_seen_update"] = str(last_update)
+
+    return JsonResponse({"refresh_required": refresh_needed})
