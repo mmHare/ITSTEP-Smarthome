@@ -9,9 +9,9 @@
     <form class="form-with-validation" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Zarejestruj się</button>
+        <button type="submit">Register</button>
     </form>
-    <p>Masz już konto? <a href="{% url 'smarthome:login' %}">Zaloguj się</a></p>
+    <p>Already have an account? <a href="{% url 'smarthome:login' %}">Login</a></p>
     </div>
 {% endblock %} 
 

@@ -11,8 +11,13 @@
 <div class="content">
 <p><strong>Type: </strong>{{ device.device_type }}</p>
 <p><strong>Room: </strong>{% if device.device_room %}{{ device.device_room }}{% else %}None{% endif %}</p>
-<p><strong>On/Off: </strong>{% if device.state %}On{% else %}Off{% endif %}</p>
-
+{% if device.state and device.power_on %}
+    <p><strong>State: </strong>on</p>
+{% elif not device.state and device.power_on %}
+    <p><strong>State: </strong>stand-by</p>
+{% elif not device.state and not device.power_on %}
+    <p><strong>State: </strong>off</p>
+{% endif %}
 <h3>Rules set for this device:</h3>
 {% if logic_controllers %}
 <table class="tableRules">

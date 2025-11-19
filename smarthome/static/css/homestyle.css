@@ -86,7 +86,7 @@ a:hover {
   opacity: 0.85;
 }
 
-
+/* Buttons */
 button {
     padding: 6px 5px;
     border: none;
@@ -128,6 +128,10 @@ button:hover {
 .buttonDelete:hover {
   background-color: rgb(172, 0, 0);
   transition: background-color 0.2s ease;
+}
+
+.tableStats .buttonDelete  {
+  background-color: oklch(from var(--text-color) l 0.3 90);
 }
 
 
@@ -183,6 +187,19 @@ li.devices {
 .tableStats th, td {
   padding: 20px;
   border-bottom: 1px solid;
+}
+
+.tableStats th > button {
+  background-color: var(--text-color);
+}
+
+.tableStats th > button:hover {
+  opacity: 0.8;
+}
+
+.tableStats th > button[aria-current="page"] {
+  opacity: 0.6;
+  background-color: var(--link-color);
 }
 
 /* Pasek nawigacyjny */

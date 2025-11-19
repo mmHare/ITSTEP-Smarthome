@@ -20,15 +20,18 @@ from django.views.decorators.http import require_POST
 
 
 def devices_home_view(request):
-    user_name = request.user.username
+    user = request.user
 
-    if not user_name:
+    if not user.username:
         return redirect('smarthome:login')
 
-    user_devices = Device.objects.filter(device_user=request.user)
+    if user.is_staff:
+        user_devices = Device.objects.filter()        
+    else:
+        user_devices = Device.objects.filter(device_user=request.user)
 
     return render(request, 'devices/home.html', {
-        'user_name': user_name,
+        'user_name': user.username,
         'devices': user_devices
     })
 
