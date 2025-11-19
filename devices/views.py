@@ -112,7 +112,8 @@ def new_rule_view(request, pk):
         show_numeric = device.device_type.get_show_numeric_fields()
         show_time = device.device_type.get_show_time_fields()
 
-        form = LogicControllerForm(request.POST, show_numeric=show_numeric, show_time=show_time)
+        form = LogicControllerForm(
+            request.POST, show_numeric=show_numeric, show_time=show_time)
         if form.is_valid():
             rule = form.save(commit=False)  # don't save yet
             rule.rule_user = request.user  # set user before saving
@@ -173,7 +174,7 @@ class RuleUpdateView(UpdateView):
         context["device"] = LogicController.objects.filter(
             device=device)
         return context
-    
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
@@ -205,6 +206,7 @@ class RuleUpdateView(UpdateView):
     def get_queryset(self):
         # Restrict editing to the logged-in user's devices
         return LogicController.objects.filter()
+
 
 def room_list_view(request):
     error_text = ''
@@ -321,3 +323,8 @@ def toggle_power(request, pk):
             StatsService.save_user_action(request.user, "power_on", device)
 
         return redirect('devices:home')
+
+
+def check_status(request):
+    if_refresh = some_logic()
+    return JsonResponse({"refresh_required": if_refresh})

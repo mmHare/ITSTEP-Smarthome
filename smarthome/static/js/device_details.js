@@ -88,3 +88,13 @@ function sendRuleAction(ruleId, pAction, pDict) {
             alert("Network error while sending rule action");
         });
 }
+
+setInterval(() => {
+    fetch("/devices/check_status/")
+        .then(r => r.json())
+        .then(data => {
+            if (data.refresh_required) {
+                window.location.reload();   // refresh page
+            }
+        });
+}, 5000); // every 5 seconds
