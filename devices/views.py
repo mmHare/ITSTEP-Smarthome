@@ -140,12 +140,18 @@ class DeviceUpdateView(UpdateView):
 
     def get_queryset(self):
         # Restrict editing to the logged-in user's devices
+        if self.request.user.is_staff:
+            return Device.objects.filter()
         return Device.objects.filter(device_user=self.request.user)
 
 
 def delete_device_view(request, pk):
-    device = get_object_or_404(
-        Device, pk=pk, device_user=request.user)  # ensures ownership
+    
+    if request.user.is_staff:
+        device = get_object_or_404(Device, pk=pk)
+    else:
+        device = get_object_or_404(
+            Device, pk=pk, device_user=request.user)  # ensures ownership
 
     if request.method == 'POST':
         # save to action history
@@ -156,11 +162,11 @@ def delete_device_view(request, pk):
         return redirect('devices:home')
 
 
-class RuleUpdateView(UpdateView):
+class RuleDetailView(generic.DetailView):
     model = LogicController
-    form_class = LogicControllerForm
-    template_name = 'devices/rule_form.html'
-    success_url = reverse_lazy('devices:details')
+    template_name = 'devices/rule_details.html'
+    context_object_name = "rule"
+    # success_url = reverse_lazy('devices:details')
 
     def get_context_data(self, **kwargs) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -173,8 +179,8 @@ class RuleUpdateView(UpdateView):
 
         context["logic_form"] = LogicControllerForm(
             show_numeric=show_numeric, show_time=show_time)
-        context["device"] = LogicController.objects.filter(
-            device=device)
+        context["device"] = Device.objects.filter(
+            id=device.id)
         return context
     
     def post(self, request, *args, **kwargs):
@@ -205,9 +211,17 @@ class RuleUpdateView(UpdateView):
         context["logic_form"] = form
         return self.render_to_response(context)
 
+
+class RuleUpdateView(UpdateView):
+    model = LogicController
+    form_class = LogicControllerForm
+    template_name = 'devices/rule_form.html'
+    success_url = reverse_lazy('devices:details')
+
     def get_queryset(self):
         # Restrict editing to the logged-in user's devices
         return LogicController.objects.filter()
+
 
 def room_list_view(request):
     error_text = ''

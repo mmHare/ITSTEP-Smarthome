@@ -4,7 +4,7 @@
 
 {% block content %}
 {% load static %}
-<script type="text/javascript" src="{% static 'js/log_filter.js' %}" defer></script>
+{% comment %} <script type="text/javascript" src="{% static 'js/log_filter.js' %}" defer></script> {% endcomment %}
 <script type="text/javascript" src="{% static 'js/sort_active.js' %}" defer></script>
 
 {% if user.is_staff %}
@@ -17,13 +17,13 @@
 {% if page_log %}
     <div class="center">
     {% if user.is_staff %}
-        <button class="admin" onclick="window.location='{% url 'stats:export' 'all-users' %}'">Download all users logs<br>(Admin)</button>
+        <button class="buttonDownload admin" onclick="window.location='{% url 'stats:export' 'all-users' %}'">Download all users logs<br>(Admin)</button>
     {% else %}
-        <button onclick="window.location='{% url 'stats:export' 'user' %}'">Download {{ user_name }}'s logs</button>
+        <button class="buttonDownload" onclick="window.location='{% url 'stats:export' 'user' %}'">Download {{ user_name }}'s logs</button>
     {% endif %}
     </div>
 
-<input type="text" id="FilterLogInput" onkeyup="LogFilter()" placeholder="Search for action.." title="Type in an action">
+{% comment %} <input type="text" id="FilterLogInput" onkeyup="LogFilter()" placeholder="Search for action.." title="Type in an action"> {% endcomment %}
 
 <div class="center">
     <span class="step-links">

@@ -9,6 +9,7 @@
 <div class="container">
 <div class="header"><h2>Device: {{ device.device_name }}</h2></div>
 <div class="content">
+<button class="buttonAdd" onclick="window.location='{% url 'devices:home' %}'">Go back</button>
 <p><strong>Type: </strong>{{ device.device_type }}</p>
 <p><strong>Room: </strong>{% if device.device_room %}{{ device.device_room }}{% else %}None{% endif %}</p>
 {% if device.state and device.power_on %}
@@ -36,6 +37,9 @@
         <th>Value</th>
         <th>New value</th>
         {% endif %}
+        <th></th>
+        <th></th>
+        <th></th>
     </tr>
     {% for rule in logic_controllers %}
         <tr id="rule_{{ rule.id }}">
@@ -63,14 +67,18 @@
                     <button type="submit">Edit</button>
                 </form></td>
             <td><button class="buttonDelete" type="button" onclick="sendRuleAction({{ rule.id }}, 'delete')">Delete</button></td>
+            <td><button type="button" onclick="window.location='{% url 'devices:rule_details' rule.id %}'">Details</button></td>
             </tr>
     {% endfor %}
 </table>
+<div class="center">
+<button class="buttonDownload" onclick="window.location='{% url 'stats:export' 'device' device.id %}'">Download device log</button>
+</div>
 {% else %}
 <p>No rules set yet</p>
 {% endif %}
 
-<button onclick="window.location='{% url 'devices:new_rule' device.id %}'">+ Add new rule</button>
+{% comment %} <button onclick="window.location='{% url 'devices:new_rule' device.id %}'">+ Add new rule</button> {% endcomment %}
 
 <h3>Add a new rule:</h3>   
 <form method="POST" action="{% url 'devices:details' device.id %}">
@@ -89,10 +97,8 @@
 
 <br>
 
-<button onclick="window.location='{% url 'devices:home' %}'">Back</button>
 </div>
 
-<button onclick="window.location='{% url 'stats:export' 'device' device.id %}'">Download device log</button>
 {% endblock %}
 
 

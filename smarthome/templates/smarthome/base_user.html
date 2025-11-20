@@ -19,7 +19,9 @@
     <li><a href="{% url 'devices:home' %}">Devices</a></li>
     <li><a href="{% url 'devices:room_list' %}">Room List</a></li>
     <li><a href="{% url 'stats:home' %}">User Action History</a></li>
+    {% if user.is_staff %}
     <li><a href="{% url 'admin:index' %}">Administration Panel</a></li>
+    {% endif %}
   </ul>
   <header>
     <button id="theme-switch" title="switch theme">

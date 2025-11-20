@@ -2,12 +2,32 @@
   --base-color: rgb(135, 190, 216);
   --text-color: rgb(12, 18, 49);
   --link-color: rgb(97, 48, 233);
+  --button-color: rgb(0, 102, 71);
+  --button-hover-color: oklch(from var(--button-color) calc(l - 0.2) c h);
+  --button-text-color: rgb(210, 255, 236);
+  --admin-color: rgb(139, 18, 196);
+  --admin-hover-color: oklch(from var(--admin-color) calc(l - 0.2) c h);
+  --red-color: rgb(194, 0, 0);
+  --red-hover-color: oklch(from var(--red-color) calc(l - 0.2) c h);
+  --table-color: oklch(from var(--base-color) calc(l - 0.1) c h);
+  --table-header-color: oklch(from var(--base-color) calc(l - 0.2) c h);
+  --table-row-color: oklch(from var(--base-color) calc(l - 0.05) c h);
 }
 
 .darkmode {
   --base-color: rgb(31, 45, 51);
   --text-color: rgb(178, 214, 168);
   --link-color: rgb(166, 166, 255);
+  --button-color: rgb(0, 66, 141);
+  --button-hover-color: oklch(from var(--button-color) calc(l + 0.2) c h);
+  --button-text-color: rgb(196, 227, 255);
+  --admin-color: rgb(97, 13, 136);
+  --admin-hover-color: oklch(from var(--admin-color) calc(l + 0.2) c h);
+  --red-color: rgb(151, 0, 0);
+  --red-hover-color: oklch(from var(--red-color) calc(l + 0.2) c h);
+  --table-color: oklch(from var(--base-color) calc(l + 0.1) c h);
+  --table-header-color: oklch(from var(--base-color) calc(l + 0.2) c h);
+  --table-row-color: oklch(from var(--base-color) calc(l + 0.05) c h);
 }
 
 * {
@@ -86,21 +106,25 @@ a:hover {
   opacity: 0.85;
 }
 
+::placeholder {
+  font-style: italic;
+}
+
 /* Buttons */
 button {
-    padding: 6px 5px;
-    border: none;
-    max-width: 10rem;
-    border-radius: 0.4rem;
-    font-size: 1rem;
-    cursor: pointer;
-    background-color: #007bff;
-    color: white;
-    transition: background-color 0.2s ease;
+  padding: 6px 6px;
+  border: none;
+  max-width: 10rem;
+  border-radius: 0.4rem;
+  font-size: 1rem;
+  cursor: pointer;
+  background-color: var(--button-color);
+  color: var(--button-text-color);
+  transition: background-color 0.2s ease-in-out;
 }
 
 button:hover {
-    background-color: #0056b3;
+  background-color: var(--button-hover-color);
 }
 
 .buttonLogout {
@@ -108,26 +132,45 @@ button:hover {
   top: 120px;
   right: 10px;
   width: 5rem;
+  border: 2px solid var(--text-color);
+}
+
+.buttonDownload {
+  position: fixed;
+  top: 190px;
+  right: 10px;
   border: 1px solid var(--text-color);
+  height: 4rem;
+}
+
+.buttonAdd {
+  position: fixed;
+  top: 100px;
+  left: 10px;
+  border: 1px solid var(--text-color);
+  height: 4rem;
 }
 
 .admin {
-  background-color: rgb(139, 18, 196);
+  background-color: var(--admin-color);
+  color: whitesmoke;
   max-width: 15rem;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .admin:hover {
-  background-color: rgb(101, 14, 141);
+  background-color: var(--admin-hover-color);
 }
 
 .buttonDelete {
-  background-color: #F00;
+  background-color: var(--red-color);
+  color: whitesmoke;
   padding: 4px 5px;
+  transition: background-color 0.2s ease-in-out;
 }
 
 .buttonDelete:hover {
-  background-color: rgb(172, 0, 0);
-  transition: background-color 0.2s ease;
+  background-color: var(--red-hover-color);
 }
 
 .tableStats .buttonDelete  {
@@ -156,7 +199,7 @@ li.devices {
   border-color: var(--text-color);
   border-collapse: collapse;
   border-radius: 25px;
-  background-color: oklch(from var(--base-color) calc(l - 0.1) c h);
+  background-color: var(--table-color);
   width: auto;
 }
 
@@ -165,9 +208,21 @@ li.devices {
   border-bottom: 1px solid;
 }
 
+.tableDevices th {
+  background-color: var(--table-header-color);
+}
+
+.tableDevices tr:nth-child(even) {
+  background-color: var(--table-row-color);
+}
+
 .tableRules {
-  border: 1px solid;
+  border-width: 3px;
+  border-style: hidden;
+  border-color: var(--text-color);
   border-collapse: collapse;
+  border-radius: 25px;
+  background-color: var(--table-color);
   width: auto;
   text-align: center;
 }
@@ -177,9 +232,21 @@ li.devices {
   border-bottom: 1px solid;
 }
 
+.tableRules th {
+  background-color: var(--table-header-color);
+}
+
+.tableRules tr:nth-child(even) {
+  background-color: var(--table-row-color);
+}
+
 .tableStats {
-  border: 1px solid;
+  border-width: 3px;
+  border-style: hidden;
+  border-color: var(--text-color);
   border-collapse: collapse;
+  border-radius: 25px;
+  background-color: var(--table-color);
   width: auto;
   text-align: center;
 }
@@ -189,17 +256,24 @@ li.devices {
   border-bottom: 1px solid;
 }
 
+.tableStats th {
+  background-color: var(--table-header-color);
+}
+
+.tableStats tr:nth-child(even) {
+  background-color: var(--table-row-color);
+}
+
 .tableStats th > button {
-  background-color: var(--text-color);
+  background-color: var(--button-color);
 }
 
 .tableStats th > button:hover {
-  opacity: 0.8;
+  background-color: var(--button-hover-color);
 }
 
 .tableStats th > button[aria-current="page"] {
-  opacity: 0.6;
-  background-color: var(--link-color);
+  background-color: var(--button-hover-color);
 }
 
 /* Pasek nawigacyjny */
