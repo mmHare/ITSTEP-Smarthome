@@ -17,4 +17,5 @@ urlpatterns = [
     path('logic/<int:pk>/toggle-active/',
          toggle_logic_active, name='toggle_logic_active'),
     path('logic/<int:pk>/rule-action/', rule_action, name='rule_action'),
+    path('check_status/', check_status, name='check_status'),
 ]

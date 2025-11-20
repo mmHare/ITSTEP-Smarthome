@@ -17,6 +17,7 @@ from .models import Device, DeviceRoom
 from django.http import JsonResponse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
+from django.db.models import Max
 
 
 def devices_home_view(request):
@@ -26,7 +27,7 @@ def devices_home_view(request):
         return redirect('smarthome:login')
 
     if user.is_staff:
-        user_devices = Device.objects.filter()        
+        user_devices = Device.objects.filter()
     else:
         user_devices = Device.objects.filter(device_user=request.user)
 
@@ -115,7 +116,8 @@ def new_rule_view(request, pk):
         show_numeric = device.device_type.get_show_numeric_fields()
         show_time = device.device_type.get_show_time_fields()
 
-        form = LogicControllerForm(request.POST, show_numeric=show_numeric, show_time=show_time)
+        form = LogicControllerForm(
+            request.POST, show_numeric=show_numeric, show_time=show_time)
         if form.is_valid():
             rule = form.save(commit=False)  # don't save yet
             rule.rule_user = request.user  # set user before saving
@@ -177,12 +179,11 @@ class RuleDetailView(generic.DetailView):
         show_numeric = device.device_type.get_show_numeric_fields()
         show_time = device.device_type.get_show_time_fields()
 
-        context["logic_form"] = LogicControllerForm(
-            show_numeric=show_numeric, show_time=show_time)
-        context["device"] = Device.objects.filter(
-            id=device.id)
+        context["logic_form"] = LogicControllerForm(instance=self.object,
+                                                    show_numeric=show_numeric, show_time=show_time)
+        context["device"] = device
         return context
-    
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
@@ -192,17 +193,16 @@ class RuleDetailView(generic.DetailView):
 
         form = LogicControllerForm(
             request.POST or None,
+            instance=self.object,
             show_numeric=show_numeric,
             show_time=show_time
         )
 
         if form.is_valid():
-            logic = form.save(commit=False)
-            logic.device = self.object
-            logic.save()
+            logic = form.save()
 
             # success, so save history record
-            action = 'add'
+            action = 'edit'
             StatsService.save_user_action(request.user, action, logic)
 
             return redirect("devices:details", pk=self.object.device.pk)
@@ -219,8 +219,7 @@ class RuleUpdateView(UpdateView):
     success_url = reverse_lazy('devices:details')
 
     def get_queryset(self):
-        # Restrict editing to the logged-in user's devices
-        return LogicController.objects.filter()
+        return LogicController.objects.all()
 
 
 def room_list_view(request):
@@ -338,3 +337,20 @@ def toggle_power(request, pk):
             StatsService.save_user_action(request.user, "power_on", device)
 
         return redirect('devices:home')
+
+
+def check_status(request):
+    last_update = Device.objects.aggregate(Max("updated"))["updated__max"]
+    latest_seen = request.session.get("last_seen_update")
+
+    # First time → store and return no refresh
+    if latest_seen is None:
+        request.session["last_seen_update"] = str(last_update)
+        return JsonResponse({"refresh_required": False})
+
+    refresh_needed = str(last_update) > latest_seen
+
+    if refresh_needed:
+        request.session["last_seen_update"] = str(last_update)
+
+    return JsonResponse({"refresh_required": refresh_needed})

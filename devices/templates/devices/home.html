@@ -76,5 +76,17 @@
 
 </div>
 
-{% endblock %}
+<script>
+setInterval(() => {
+    fetch("{% url 'devices:check_status' %}")
+        .then(r => r.json())
+        .then(data => {
+            if (data.refresh_required) {
+                window.location.reload();
+            }
+        })
+        .catch(err => console.error("Error in polling:", err));
+}, 3000); // every 3 seconds
+</script>
 
+{% endblock %}
