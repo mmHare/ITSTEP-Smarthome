@@ -128,23 +128,63 @@ button:hover {
 }
 
 .buttonLogout {
-  position: fixed;
-  top: 120px;
+  position: absolute;
+  top: 110px;
   right: 10px;
   width: 5rem;
   border: 2px solid var(--text-color);
 }
 
 .buttonDownload {
-  position: fixed;
-  top: 190px;
+  position: absolute;
+  top: 175px;
   right: 10px;
   border: 1px solid var(--text-color);
   height: 4rem;
 }
 
+.buttonClear {
+  position: absolute;
+  top: 250px;
+  right: 10px;
+  border: 1px solid var(--text-color);
+  height: 4rem;
+}
+
+.buttonDownloadSort {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  border: 1px solid var(--text-color);
+  height: 4rem;
+}
+
+.buttonClearSort {
+  position: absolute;
+  top: 130px;
+  left: 10px;
+  border: 1px solid var(--text-color);
+  height: 4rem;
+}
+
+.buttonDownloadDevices {
+  position: absolute;
+  top: 115px;
+  left: 10px;
+  border: 1px solid var(--text-color);
+  height: 3.2rem;
+}
+
+.buttonClearDevices {
+  position: absolute;
+  top: 115px;
+  left: 220px;
+  border: 1px solid var(--text-color);
+  height: 3.2rem;
+}
+
 .buttonAdd {
-  position: fixed;
+  position: absolute;
   top: 60px;
   left: 10px;
   border: 1px solid var(--text-color);
@@ -191,7 +231,12 @@ button:hover {
 }
 
 .tableStats .buttonDelete  {
-  background-color: oklch(from var(--text-color) l 0.3 90);
+  background-color: var(--red-color);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.tableStats .buttonDelete:hover  {
+  background-color: var(--red-hover-color-color);
 }
 
 
@@ -432,9 +477,9 @@ button:hover {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: fixed;
-  top: 4rem;
-  right: 1rem;
+  position: absolute;
+  top: 55px;
+  right: 10px;
 }
 
 #theme-switch:hover {

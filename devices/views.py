@@ -252,6 +252,7 @@ def room_list_view(request):
         'rooms': device_rooms,
         'error': error_text,
         'devices': devices,
+        'user': user,
     })
 
 

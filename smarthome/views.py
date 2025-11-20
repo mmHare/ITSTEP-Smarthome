@@ -57,7 +57,7 @@ def register_view(request):
             user = form.save()
             login(request, user)
             StatsService.save_user_action(user, 'register')
-            return redirect('smarthome:login')
+            return redirect('smarthome:home')
         print('not valid')
     else:
         form = SignUpForm()

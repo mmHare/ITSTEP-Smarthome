@@ -1,6 +1,6 @@
 import csv
 import io
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.core.paginator import Paginator
 
@@ -123,18 +123,21 @@ def clear_log_view(request, mode, pk=None):
     try:
         if mode == "user":  # get data for current user
             StatsService.clear_user_logs(request.user)
-            return HttpResponse("Clear user history success.", status=200)
+            # return HttpResponse("Clear user history success.", status=200)
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
         elif mode == "all-users":  # get data for all users
             StatsService.clear_user_logs()
-            return HttpResponse("Clear users history success.", status=200)
+            # return HttpResponse("Clear users history success.", status=200)
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
         elif mode == "device":  # get data for given device
             if pk <= 0:
                 raise ValueError("Invalid device id")
             else:
                 StatsService.clear_device_logs(pk)
-                return HttpResponse("Clear device history success.", status=200)
+                # return HttpResponse("Clear device history success.", status=200)
+                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
         elif mode == "all-devices":
             StatsService.clear_device_logs(pk)

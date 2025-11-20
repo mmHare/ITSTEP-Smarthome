@@ -9,7 +9,8 @@
 
 <div class="center">
 {% if user.is_staff %}
-<button class="buttonDownload admin" onclick="window.location='{% url 'stats:export' 'all-devices' %}'">Download all devices logs<br>(Admin)</button>
+<button class="buttonDownloadDevices admin" onclick="window.location='{% url 'stats:export' 'all-devices' %}'">Download all devices logs<br>(Admin)</button>
+<button class="buttonClearDevices admin" onclick="window.location='{% url 'stats:clear-logs' 'all-devices' %}'">Clear all devices logs<br>(Admin)</button>
 {% endif %}
 <button class="buttonAdd" onclick="window.location='{% url 'devices:new_device' %}'">+ Add New Device</button>
 </div>

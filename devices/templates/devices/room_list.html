@@ -19,7 +19,9 @@
             <ul>
             {% for device in devices %}
                 {% if device.device_room.room_name == room.room_name %}
-                    <li>{{ device.device_name }}</li>
+                    <li>{{ device.device_name }}
+                        {% if user.is_staff %}({{ device.device_user }}){% endif %}
+                    </li>
                 {% endif %}
             {% endfor %}
             </ul>

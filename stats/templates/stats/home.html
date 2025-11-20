@@ -17,9 +17,11 @@
 {% if page_log %}
     <div class="center">
     {% if user.is_staff %}
-        <button class="buttonDownload admin" onclick="window.location='{% url 'stats:export' 'all-users' %}'">Download all users logs<br>(Admin)</button>
+        <button class="buttonDownloadSort admin" onclick="window.location='{% url 'stats:export' 'all-users' %}'">Download all users logs<br>(Admin)</button>
+        <button class="buttonClearSort admin" onclick="window.location='{% url 'stats:clear-logs' 'all-users' %}'">Clear all users logs<br>(Admin)</button>
     {% else %}
-        <button class="buttonDownload" onclick="window.location='{% url 'stats:export' 'user' %}'">Download {{ user_name }}'s logs</button>
+        <button class="buttonDownloadSort" onclick="window.location='{% url 'stats:export' 'user' %}'">Download {{ user_name }}'s logs</button>
+        <button class="buttonClearSort" onclick="window.location='{% url 'stats:clear-logs' 'user' %}'">Clear {{ user_name }}'s logs</button>
     {% endif %}
     </div>
 

@@ -96,6 +96,7 @@
 </table>
 <div class="center">
 <button class="buttonDownload" onclick="window.location='{% url 'stats:export' 'device' device.id %}'">Download device log</button>
+<button class="buttonClear" onclick="window.location='{% url 'stats:clear-logs' 'device' device.id %}'">Clear device log</button>
 </div>
 {% else %}
 <p>No rules set yet</p>
