@@ -52,7 +52,7 @@ class DeviceType(models.Model):
 class Device(models.Model):
     item_kind = "device"
 
-    device_name = models.CharField("name", max_length=200)
+    device_name = models.CharField("name", unique=True, max_length=200)
     device_user = models.ForeignKey(
         User, verbose_name="user", on_delete=models.CASCADE)
     device_type = models.ForeignKey(
@@ -99,10 +99,6 @@ class Device(models.Model):
         self.set_state(False)
         self.power_on = False
         StatsService.save_device_state(self, description="Power off")
-
-    @property
-    def item_kind(self) -> str:
-        return self.device_type.type_name
 
     def monitor_device(self):
         if not self.is_monitor_state:
