@@ -173,10 +173,9 @@ class RuleUpdateView(UpdateView):
         show_numeric = device.device_type.get_show_numeric_fields()
         show_time = device.device_type.get_show_time_fields()
 
-        context["logic_form"] = LogicControllerForm(
-            show_numeric=show_numeric, show_time=show_time)
-        context["device"] = LogicController.objects.filter(
-            device=device)
+        context["logic_form"] = LogicControllerForm(instance=self.object,
+                                                    show_numeric=show_numeric, show_time=show_time)
+        context["device"] = device
         return context
 
     def post(self, request, *args, **kwargs):
@@ -188,17 +187,16 @@ class RuleUpdateView(UpdateView):
 
         form = LogicControllerForm(
             request.POST or None,
+            instance=self.object,
             show_numeric=show_numeric,
             show_time=show_time
         )
 
         if form.is_valid():
-            logic = form.save(commit=False)
-            logic.device = self.object
-            logic.save()
+            logic = form.save()
 
             # success, so save history record
-            action = 'add'
+            action = 'edit'
             StatsService.save_user_action(request.user, action, logic)
 
             return redirect("devices:details", pk=self.object.device.pk)
@@ -208,8 +206,7 @@ class RuleUpdateView(UpdateView):
         return self.render_to_response(context)
 
     def get_queryset(self):
-        # Restrict editing to the logged-in user's devices
-        return LogicController.objects.filter()
+        return LogicController.objects.all()
 
 
 def room_list_view(request):

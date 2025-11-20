@@ -62,6 +62,8 @@ class Device(models.Model):
     state = models.BooleanField("on", default=False)
     is_monitor_state = models.BooleanField("monitor state", default=False)
     power_on = models.BooleanField("power_on", default=False)
+
+    # automatically saves time of last update (needed for refresh on state change)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -88,7 +90,7 @@ class Device(models.Model):
         if not self.power_on:
             self.power_on = True
             StatsService.save_device_state(self, description="Power on")
-        self.set_state(True)
+        # self.set_state(True)
 
     def turn_off(self):
         # power off
