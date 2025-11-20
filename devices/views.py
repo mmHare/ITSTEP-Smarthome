@@ -14,7 +14,7 @@ from stats.stats_service import StatsService
 from .forms import DeviceForm
 from .models import Device, DeviceRoom
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 from django.db.models import Max
@@ -242,9 +242,16 @@ def room_list_view(request):
 
     device_rooms = DeviceRoom.objects.filter()
 
+    user = request.user
+    if user.is_staff:
+        devices = Device.objects.filter()
+    else:
+        devices = Device.objects.filter(device_user=user)
+
     return render(request, 'devices/room_list.html', {
         'rooms': device_rooms,
         'error': error_text,
+        'devices': devices,
     })
 
 
@@ -336,7 +343,7 @@ def toggle_power(request, pk):
             device.save()
             StatsService.save_user_action(request.user, "power_on", device)
 
-        return redirect('devices:home')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 def check_status(request):

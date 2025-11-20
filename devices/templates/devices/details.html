@@ -9,7 +9,30 @@
 <div class="container">
 <div class="header"><h2>Device: {{ device.device_name }}</h2></div>
 <div class="content">
-<button class="buttonAdd" onclick="window.location='{% url 'devices:home' %}'">Go back</button>
+<button class="buttonAdd" onclick="window.location='{% url 'devices:home' %}'">Go Back</button>
+
+<form method="POST" action="{% url 'devices:toggle_power' device.id %}">
+    {% csrf_token %}
+    {% if device.power_on %}
+        <button type="submit" title="Power OFF device" class="buttonPower buttonDelete">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M380-120v-120L240-380v-220q0-24 11-45t32-32l77 77h-40v186l140 140v74h40v-74l37-37L56-792l56-56 736 736-56 56-198-198-14 14v120H380Zm306-268-46-46v-166H474L320-754v-86h80v160h160v-160h80v200l-40-40h40q33 0 56.5 23.5T720-600v178l-34 34ZM558-516Zm-130 97Z"/></svg>
+        </button>
+    {% elif not device.power_on %}
+        <button type="submit" class="buttonPower" title="Power ON device">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M460-200h40v-74l140-140v-186H320v186l140 140v74Zm-80 80v-120L240-380v-220q0-33 23.5-56.5T320-680h40l-40 40v-200h80v160h160v-160h80v200l-40-40h40q33 0 56.5 23.5T720-600v220L580-240v120H380Zm100-280Z"/></svg>
+        </button>
+    {% endif %}
+</form>
+
+<div class="iconPower">
+{% if device.state and device.power_on %}
+<svg xmlns="http://www.w3.org/2000/svg" height="54px" viewBox="0 -960 960 960" width="54px" fill="#3feb00ff"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-80q100 0 170-70t70-170q0-51-19-94.5T650-650l-57 57q22 22 34.5 51t12.5 62q0 66-47 113t-113 47q-66 0-113-47t-47-113q0-33 12.5-62t34.5-51l-57-57q-32 32-51 75.5T240-480q0 100 70 170t170 70Zm-40-240h80v-240h-80v240Zm40 0Z"/></svg>
+{% elif not device.state and device.power_on %}
+<svg xmlns="http://www.w3.org/2000/svg" height="54px" viewBox="0 -960 960 960" width="54px" fill="#bd0000"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-80q100 0 170-70t70-170q0-51-19-94.5T650-650l-57 57q22 22 34.5 51t12.5 62q0 66-47 113t-113 47q-66 0-113-47t-47-113q0-33 12.5-62t34.5-51l-57-57q-32 32-51 75.5T240-480q0 100 70 170t170 70Zm-40-240h80v-240h-80v240Zm40 0Z"/></svg>
+{% elif not device.state and not device.power_on %}
+<svg xmlns="http://www.w3.org/2000/svg" height="54px" viewBox="0 -960 960 960" width="54px" fill="#575757ff"><path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-80q100 0 170-70t70-170q0-51-19-94.5T650-650l-57 57q22 22 34.5 51t12.5 62q0 66-47 113t-113 47q-66 0-113-47t-47-113q0-33 12.5-62t34.5-51l-57-57q-32 32-51 75.5T240-480q0 100 70 170t170 70Zm-40-240h80v-240h-80v240Zm40 0Z"/></svg>
+{% endif %}
+</div>
 <p><strong>Type: </strong>{{ device.device_type }}</p>
 <p><strong>Room: </strong>{% if device.device_room %}{{ device.device_room }}{% else %}None{% endif %}</p>
 {% if device.state and device.power_on %}
@@ -19,7 +42,7 @@
 {% elif not device.state and not device.power_on %}
     <p><strong>State: </strong>off</p>
 {% endif %}
-<h3>Rules set for this device:</h3>
+<div class="center"><h3>Rules set for this device:</h3></div>
 {% if logic_controllers %}
 <table class="tableRules">
     <tr>
@@ -36,8 +59,8 @@
         {% if device.device_type.enable_thermal %}
         <th>Value</th>
         <th>New value</th>
-        {% endif %}
         <th></th>
+        {% endif %}
         <th></th>
         <th></th>
     </tr>
@@ -63,11 +86,11 @@
             <td><button type="button" onclick="sendRuleAction({{ rule.id }}, 'set_value', 
                     {input_value_num: document.getElementById('rule_{{ rule.id }}_value').value})">Apply new value</button></td>
             {% endif %}
-            <td><form method="get" action="{% url 'devices:edit_rule' rule.id %}">
+            {% comment %} <td><form method="get" action="{% url 'devices:edit_rule' rule.id %}">
                     <button type="submit">Edit</button>
-                </form></td>
+                </form></td> {% endcomment %}
+            <td><button type="button" onclick="window.location='{% url 'devices:rule_details' rule.id %}'">Edit</button></td>
             <td><button class="buttonDelete" type="button" onclick="sendRuleAction({{ rule.id }}, 'delete')">Delete</button></td>
-            <td><button type="button" onclick="window.location='{% url 'devices:rule_details' rule.id %}'">Details</button></td>
             </tr>
     {% endfor %}
 </table>
@@ -98,6 +121,19 @@
 <br>
 
 </div>
+
+<script>
+setInterval(() => {
+    fetch("{% url 'devices:check_status' %}")
+        .then(r => r.json())
+        .then(data => {
+            if (data.refresh_required) {
+                window.location.reload();
+            }
+        })
+        .catch(err => console.error("Error in polling:", err));
+}, 3000); // every 3 seconds
+</script>
 
 {% endblock %}
 

@@ -145,10 +145,28 @@ button:hover {
 
 .buttonAdd {
   position: fixed;
-  top: 100px;
+  top: 60px;
   left: 10px;
   border: 1px solid var(--text-color);
-  height: 4rem;
+  height: 3rem;
+}
+
+.buttonPower {
+  position: absolute;
+  top: 220px;
+  left: 0; 
+  right: 0; 
+  margin-inline: auto; 
+  width: fit-content;
+}
+
+.iconPower {
+  position: absolute;
+  top: 160px;
+  left: 0; 
+  right: 0; 
+  margin-inline: auto; 
+  width: fit-content;
 }
 
 .admin {
@@ -165,7 +183,6 @@ button:hover {
 .buttonDelete {
   background-color: var(--red-color);
   color: whitesmoke;
-  padding: 4px 5px;
   transition: background-color 0.2s ease-in-out;
 }
 
@@ -178,27 +195,40 @@ button:hover {
 }
 
 
-li.rooms {
-  margin-top: 0.6rem;
-  margin-bottom: 0.6rem;
+.rooms {
+  border: 3px solid var(--text-color);
+  background-color: var(--table-color);
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.rooms > li {
+  margin: 18px;
   list-style-position: inside;
   list-style-type: square;
 }
 
-li.devices {
-  margin-top: 0.6rem;
-  margin-bottom: 0.6rem;
-  list-style-type: none;
+.rooms > li > ul {
+  list-style-type: circle;
+  font-size: 1.5rem;
+  margin-left: 20px;
+  margin-top: 0.1rem;
 }
 
+.addRoom {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
 /* TABELE */
 .tableDevices {
   border-width: 3px;
-  border-style: hidden;
+  border-style: solid;
   border-color: var(--text-color);
   border-collapse: collapse;
-  border-radius: 25px;
+  /* border-radius: 25px; */
   background-color: var(--table-color);
   width: auto;
 }
@@ -217,11 +247,10 @@ li.devices {
 }
 
 .tableRules {
-  border-width: 3px;
-  border-style: hidden;
+  border-width: 2px;
+  border-style: solid;
   border-color: var(--text-color);
   border-collapse: collapse;
-  border-radius: 25px;
   background-color: var(--table-color);
   width: auto;
   text-align: center;
@@ -242,10 +271,9 @@ li.devices {
 
 .tableStats {
   border-width: 3px;
-  border-style: hidden;
+  border-style: solid;
   border-color: var(--text-color);
   border-collapse: collapse;
-  border-radius: 25px;
   background-color: var(--table-color);
   width: auto;
   text-align: center;
@@ -356,6 +384,10 @@ li.devices {
   padding: 0.4rem;
   border-radius: 0.5rem;
   font-size: 1.2rem;
+}
+
+.form-with-validation .center {
+  display: grid;
 }
 
 .form-with-validation div button {
